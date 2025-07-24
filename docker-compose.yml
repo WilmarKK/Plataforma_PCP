@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: analisador-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:wilmarsoller21052025@database:5432/analisador_producao
+      - SECRET_KEY=your-secret-key-here
+    depends_on:
+      - database
+      - redis
+    ports:
+      - "8000:8000"
+    networks:
+      - analisador-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: analisador-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - analisador-net
+
+  database:
+    image: postgres:17-alpine
+    container_name: analisador-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=analisador_producao
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=wilmarsoller21052025
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - analisador-net
+
+  redis:
+    image: redis:alpine
+    container_name: analisador-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - analisador-net
+
+volumes:
+  postgres_data:
+
+networks:
+  analisador-net:
+    driver: bridge 

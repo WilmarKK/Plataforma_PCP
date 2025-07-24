@@ -1,0 +1,1055 @@
+"""
+Sistema de Validação Inteligente Avançado para Dados de Produção Industrial
+===========================================================================
+
+Este sistema usa IA para detectar padrões automaticamente e se adaptar a diferentes:
+- Tipos de máquinas (conhecidas e desconhecidas)
+- Processos variados
+- Formatos de dados diferentes
+- Padrões de produção únicos
+
+Funciona como uma verdadeira "IA interna" que aprende com os dados.
+"""
+
+import pandas as pd
+import numpy as np
+import re
+from datetime import datetime, timedelta
+from typing import List, Dict, Any, Tuple, Optional, Union
+from dataclasses import dataclass, field
+from enum import Enum
+from collections import defaultdict, Counter
+import json
+from pathlib import Path
+
+class SeverityLevel(Enum):
+    INFO = "INFO"
+    WARNING = "WARNING" 
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
+
+@dataclass
+class ValidationResult:
+    severity: SeverityLevel
+    message: str
+    row_index: int
+    machine: str
+    operator: str
+    timestamp: str
+    suggestions: List[str]
+    confidence: float = 1.0  # Nova: confiança da IA na detecção
+    pattern_type: str = "generic"  # Nova: tipo de padrão detectado
+
+@dataclass
+class MachineProfile:
+    """Perfil inteligente de uma máquina, aprendido automaticamente"""
+    name: str
+    setup_times: Dict[str, List[int]] = field(default_factory=dict)  # padrão -> tempos observados
+    production_speeds: List[float] = field(default_factory=list)  # velocidades observadas
+    common_processes: Counter = field(default_factory=Counter)  # processos mais comuns
+    typical_operators: set = field(default_factory=set)  # operadores habituais
+    shift_patterns: Dict[int, List[str]] = field(default_factory=dict)  # hora -> operadores
+    setup_keywords: List[str] = field(default_factory=list)  # palavras que indicam setup
+    production_keywords: List[str] = field(default_factory=list)  # palavras que indicam produção
+    anomaly_thresholds: Dict[str, float] = field(default_factory=dict)  # limites adaptativos
+    last_updated: datetime = field(default_factory=datetime.now)
+
+class SmartProductionValidator:
+    """
+    Validador inteligente que aprende padrões automaticamente
+    """
+    
+    def __init__(self, learning_enabled: bool = True):
+        self.results = []
+        self.learning_enabled = learning_enabled
+        self.machine_profiles: Dict[str, MachineProfile] = {}
+        self.global_patterns = {
+            'time_formats': [],
+            'setup_indicators': Counter(),
+            'production_indicators': Counter(),
+            'common_anomalies': Counter()
+        }
+        
+        # Padrões base que a IA vai expandir
+        self.base_setup_patterns = [
+            r'acerto', r'setup', r'entrada', r'preparação', r'prep',
+            r'faca\s*nova', r'nova\s*faca', r'troca', r'ajuste',
+            r'hot\s*stamping', r'verniz', r'destaque', r'relevo'
+        ]
+        
+        self.base_time_patterns = [
+            r'(\d{1,2})\s*h\s*(\d{1,2})?\s*min?',  # 1h 30min
+            r'(\d{1,2}):(\d{2})',                   # 1:30
+            r'(\d{1,3})\s*min',                     # 90min
+            r'(\d{1,2})\s*h',                       # 2h
+            r'(\d{1,4})\s*p/?h'                     # 5000p/h
+        ]
+    
+    def analyze_and_learn(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Primeira fase: analisa os dados para aprender padrões
+        """
+        df = self._normalize_columns(df)
+        learning_report = {
+            'machines_discovered': set(),
+            'patterns_learned': {},
+            'anomalies_detected': 0,
+            'confidence_level': 0.0
+        }
+        
+        # Descobrir máquinas automaticamente
+        machines = self._discover_machines(df)
+        learning_report['machines_discovered'] = machines
+        
+        # Aprender padrões de cada máquina
+        for machine in machines:
+            machine_data = df[df['maquina'].str.contains(machine, case=False, na=False)]
+            profile = self._learn_machine_patterns(machine, machine_data)
+            self.machine_profiles[machine] = profile
+            learning_report['patterns_learned'][machine] = {
+                'setup_keywords': profile.setup_keywords[:5],  # top 5
+                'avg_production_speed': np.mean(profile.production_speeds) if profile.production_speeds else 0,
+                'common_processes': dict(profile.common_processes.most_common(3))
+            }
+        
+        # Calcular confiança geral
+        total_rows = len(df)
+        learning_report['confidence_level'] = min(1.0, total_rows / 100)  # mais dados = mais confiança
+        
+        return learning_report
+    
+    def validate_with_ai(self, df: pd.DataFrame) -> List[ValidationResult]:
+        """
+        Segunda fase: valida usando os padrões aprendidos
+        """
+        self.results = []
+        df = self._normalize_columns(df)
+        
+        # Se ainda não aprendeu, aprende primeiro
+        if not self.machine_profiles:
+            self.analyze_and_learn(df)
+        
+        # Validações inteligentes por linha
+        for idx, row in df.iterrows():
+            self._ai_validate_row(idx, row, df)
+        
+        # Validações de sequência inteligentes
+        self._ai_validate_sequences(df)
+        
+        # Detectar anomalias usando ML simples
+        self._detect_statistical_anomalies(df)
+        
+        return sorted(self.results, key=lambda x: (x.severity.value, x.confidence))
+    
+    def _discover_machines(self, df: pd.DataFrame) -> set:
+        """Descobre tipos de máquina automaticamente"""
+        machines = set()
+        
+        # Procurar em colunas relevantes
+        for col in ['maquina', 'equipamento', 'recurso']:
+            if col in df.columns:
+                values = df[col].dropna().str.lower()
+                for value in values:
+                    # Extrair palavras-chave de máquinas
+                    words = re.findall(r'\b\w+\b', str(value))
+                    for word in words:
+                        if len(word) > 3 and word not in ['equipamento', 'maquina']:
+                            machines.add(word)
+        
+        # Filtrar máquinas reais (aparecem pelo menos 3 vezes)
+        machine_counts = Counter()
+        for machine in machines:
+            count = df['maquina'].str.contains(machine, case=False, na=False).sum()
+            if count >= 3:
+                machine_counts[machine] = count
+        
+        return set(machine_counts.keys())
+    
+    def _learn_machine_patterns(self, machine_name: str, machine_data: pd.DataFrame) -> MachineProfile:
+        """Aprende padrões específicos de uma máquina"""
+        profile = MachineProfile(name=machine_name)
+        
+        for idx, row in machine_data.iterrows():
+            # Aprender padrões de setup
+            evento = str(row.get('evento', '')).lower()
+            processo = str(row.get('processo', '')).lower()
+            tempo = str(row.get('tempo', ''))
+            
+            # Identificar operações de setup
+            combined_text = f"{evento} {processo}"
+            if self._is_likely_setup(combined_text):
+                setup_time = self._extract_time_minutes(tempo)
+                if setup_time > 0:
+                    setup_key = self._extract_setup_key(combined_text)
+                    if setup_key not in profile.setup_times:
+                        profile.setup_times[setup_key] = []
+                    profile.setup_times[setup_key].append(setup_time)
+                
+                # Aprender palavras-chave de setup
+                for word in combined_text.split():
+                    if len(word) > 3 and word not in profile.setup_keywords:
+                        profile.setup_keywords.append(word)
+            
+            # Aprender velocidades de produção
+            if self._is_likely_production(combined_text):
+                qtd_produzida = self._safe_float(row.get('qtd_produzida', 0))
+                tempo_minutos = self._extract_time_minutes(tempo)
+                if qtd_produzida > 0 and tempo_minutos > 0:
+                    speed = (qtd_produzida / tempo_minutos) * 60  # peças/hora
+                    if 100 < speed < 50000:  # filtrar valores absurdos
+                        profile.production_speeds.append(speed)
+            
+            # Aprender padrões de operadores
+            operator = str(row.get('operador', '')).strip()
+            if operator:
+                profile.typical_operators.add(operator)
+                
+                # Padrões de turno
+                try:
+                    start_time = pd.to_datetime(row.get('inicio'))
+                    hour = start_time.hour
+                    if hour not in profile.shift_patterns:
+                        profile.shift_patterns[hour] = []
+                    if operator not in profile.shift_patterns[hour]:
+                        profile.shift_patterns[hour].append(operator)
+                except:
+                    pass
+            
+            # Contar processos comuns
+            if processo:
+                profile.common_processes[processo] += 1
+        
+        # Calcular limites adaptativos
+        if profile.production_speeds:
+            speeds = np.array(profile.production_speeds)
+            profile.anomaly_thresholds['speed_low'] = np.percentile(speeds, 10)
+            profile.anomaly_thresholds['speed_high'] = np.percentile(speeds, 90)
+            profile.anomaly_thresholds['speed_mean'] = np.mean(speeds)
+        
+        # Limites de setup baseados em dados históricos
+        all_setup_times = []
+        for times in profile.setup_times.values():
+            all_setup_times.extend(times)
+        
+        if all_setup_times:
+            setup_array = np.array(all_setup_times)
+            profile.anomaly_thresholds['setup_low'] = np.percentile(setup_array, 5)
+            profile.anomaly_thresholds['setup_high'] = np.percentile(setup_array, 95)
+            profile.anomaly_thresholds['setup_mean'] = np.mean(setup_array)
+        
+        return profile
+    
+    def _is_likely_setup(self, text: str) -> bool:
+        """Determina se o texto indica operação de setup"""
+        setup_score = 0
+        
+        # Padrões base
+        for pattern in self.base_setup_patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                setup_score += 2
+        
+        # Outros indicadores
+        if re.search(r'\b(prep|config|ajust|troca|mud)\w*', text, re.IGNORECASE):
+            setup_score += 1
+        
+        if re.search(r'\b(nova|novo|new)\b', text, re.IGNORECASE):
+            setup_score += 1
+        
+        return setup_score >= 2
+    
+    def _is_likely_production(self, text: str) -> bool:
+        """Determina se o texto indica operação de produção"""
+        return any(word in text for word in ['produção', 'producao', 'fabricação', 'fabricacao', 'operação', 'operacao'])
+    
+    def _extract_setup_key(self, text: str) -> str:
+        """Extrai chave representativa do tipo de setup"""
+        # Palavras importantes para categorizar setup
+        key_words = []
+        for word in text.split():
+            if len(word) > 3 and word not in ['acerto', 'setup', 'preparação']:
+                key_words.append(word)
+        
+        return ' '.join(key_words[:2]) if key_words else 'generic'
+    
+    def _ai_validate_row(self, idx: int, row: pd.Series, df: pd.DataFrame):
+        """Validação inteligente de uma linha"""
+        machine = self._identify_machine(row)
+        
+        # Validações base
+        self._check_time_consistency(idx, row)
+        self._check_data_completeness(idx, row)
+        
+        # Validações específicas da máquina (se conhecida)
+        if machine in self.machine_profiles:
+            profile = self.machine_profiles[machine]
+            self._ai_check_setup_anomalies(idx, row, profile)
+            self._ai_check_production_anomalies(idx, row, profile)
+            self._ai_check_operator_patterns(idx, row, profile)
+        else:
+            # Máquina desconhecida - usar padrões genéricos
+            self._generic_anomaly_detection(idx, row)
+    
+    def _identify_machine(self, row: pd.Series) -> str:
+        """Identifica inteligentemente o tipo de máquina"""
+        machine_field = str(row.get('maquina', '')).lower()
+        
+        # Buscar correspondência com máquinas conhecidas
+        for known_machine in self.machine_profiles.keys():
+            if known_machine in machine_field:
+                return known_machine
+        
+        # Extrair nome mais provável da máquina
+        words = re.findall(r'\b\w+\b', machine_field)
+        for word in words:
+            if len(word) > 3:
+                return word
+        
+        return 'unknown'
+    
+    def _ai_check_setup_anomalies(self, idx: int, row: pd.Series, profile: MachineProfile):
+        """Detecção inteligente de anomalias de setup"""
+        evento = str(row.get('evento', '')).lower()
+        processo = str(row.get('processo', '')).lower()
+        tempo_str = str(row.get('tempo', '00:00'))
+        combined = f"{evento} {processo}"
+        
+        if self._is_likely_setup(combined):
+            tempo_minutos = self._extract_time_minutes(tempo_str)
+            setup_key = self._extract_setup_key(combined)
+            
+            # Comparar com histórico da máquina
+            if setup_key in profile.setup_times:
+                historical_times = profile.setup_times[setup_key]
+                mean_time = np.mean(historical_times)
+                std_time = np.std(historical_times)
+                
+                confidence = min(1.0, len(historical_times) / 10)  # mais dados = mais confiança
+                
+                if tempo_minutos < mean_time - 2 * std_time:
+                    self._add_ai_result(
+                        SeverityLevel.INFO,
+                        f"Setup muito rápido ({tempo_minutos}min vs média {mean_time:.0f}min)",
+                        idx, row, confidence, "statistical_anomaly",
+                        [f"Tempo usual para '{setup_key}': {mean_time:.0f}±{std_time:.0f}min",
+                         "Verificar se foi reaproveitamento ou erro de apontamento"]
+                    )
+                elif tempo_minutos > mean_time + 2 * std_time:
+                    self._add_ai_result(
+                        SeverityLevel.WARNING,
+                        f"Setup muito lento ({tempo_minutos}min vs média {mean_time:.0f}min)",
+                        idx, row, confidence, "statistical_anomaly",
+                        [f"Tempo usual para '{setup_key}': {mean_time:.0f}±{std_time:.0f}min",
+                         "Investigar problemas técnicos ou complexidade especial"]
+                    )
+            
+            # Usar limites gerais da máquina
+            elif 'setup_mean' in profile.anomaly_thresholds:
+                mean_setup = profile.anomaly_thresholds['setup_mean']
+                if tempo_minutos > mean_setup * 2:
+                    self._add_ai_result(
+                        SeverityLevel.WARNING,
+                        f"Setup fora do padrão da máquina ({tempo_minutos}min vs média {mean_setup:.0f}min)",
+                        idx, row, 0.7, "machine_pattern",
+                        ["Baseado no histórico geral da máquina",
+                         "Verificar se processo é realmente mais complexo"]
+                    )
+    
+    def _ai_check_production_anomalies(self, idx: int, row: pd.Series, profile: MachineProfile):
+        """Detecção inteligente de anomalias de produção"""
+        evento = str(row.get('evento', '')).lower()
+        
+        if self._is_likely_production(f"{evento} {str(row.get('processo', ''))}"):
+            tempo_minutos = self._extract_time_minutes(str(row.get('tempo', '00:00')))
+            qtd_produzida = self._safe_float(row.get('qtd_produzida', 0))
+            
+            if tempo_minutos > 0 and qtd_produzida > 0:
+                prod_real = (qtd_produzida / tempo_minutos) * 60  # peças/hora
+                
+                if 'speed_mean' in profile.anomaly_thresholds:
+                    speed_mean = profile.anomaly_thresholds['speed_mean']
+                    speed_low = profile.anomaly_thresholds.get('speed_low', speed_mean * 0.5)
+                    speed_high = profile.anomaly_thresholds.get('speed_high', speed_mean * 1.5)
+                    
+                    confidence = min(1.0, len(profile.production_speeds) / 20)
+                    
+                    if prod_real < speed_low:
+                        self._add_ai_result(
+                            SeverityLevel.WARNING,
+                            f"Produtividade baixa: {prod_real:.0f} p/h (média: {speed_mean:.0f})",
+                            idx, row, confidence, "performance_anomaly",
+                            [f"Faixa normal: {speed_low:.0f}-{speed_high:.0f} p/h",
+                             "Investigar problemas de qualidade ou paradas"]
+                        )
+                    elif prod_real > speed_high:
+                        self._add_ai_result(
+                            SeverityLevel.INFO,
+                            f"Produtividade alta: {prod_real:.0f} p/h (média: {speed_mean:.0f})",
+                            idx, row, confidence, "performance_anomaly",
+                            [f"Faixa normal: {speed_low:.0f}-{speed_high:.0f} p/h",
+                             "Verificar se não houve erro nos dados"]
+                        )
+    
+    def _ai_check_operator_patterns(self, idx: int, row: pd.Series, profile: MachineProfile):
+        """Verifica padrões inteligentes de operadores"""
+        operador = str(row.get('operador', '')).strip()
+        if not operador:
+            return
+        
+        try:
+            inicio = pd.to_datetime(row.get('inicio'))
+            hour = inicio.hour
+            
+            # Verificar se operador é conhecido para esta máquina
+            if operador not in profile.typical_operators:
+                confidence = min(1.0, len(profile.typical_operators) / 5)
+                self._add_ai_result(
+                    SeverityLevel.INFO,
+                    f"Operador incomum para esta máquina: {operador}",
+                    idx, row, confidence, "operator_pattern",
+                    [f"Operadores habituais: {', '.join(list(profile.typical_operators)[:3])}",
+                     "Verificar se houve treinamento ou substituição"]
+                )
+            
+            # Verificar padrões de turno
+            if hour in profile.shift_patterns:
+                usual_operators = profile.shift_patterns[hour]
+                if operador not in usual_operators:
+                    confidence = min(1.0, len(usual_operators) / 3)
+                    self._add_ai_result(
+                        SeverityLevel.INFO,
+                        f"Operador fora do turno habitual ({hour:02d}h): {operador}",
+                        idx, row, confidence, "shift_pattern",
+                        [f"Operadores usuais neste horário: {', '.join(usual_operators)}",
+                         "Pode indicar hora extra ou cobertura"]
+                    )
+        
+        except Exception:
+            pass
+    
+    def _generic_anomaly_detection(self, idx: int, row: pd.Series):
+        """Detecção genérica para máquinas desconhecidas"""
+        tempo_str = str(row.get('tempo', '00:00'))
+        tempo_minutos = self._extract_time_minutes(tempo_str)
+        
+        # Limites muito básicos
+        if tempo_minutos > 480:  # mais de 8 horas
+            self._add_ai_result(
+                SeverityLevel.WARNING,
+                f"Operação muito longa: {tempo_minutos/60:.1f}h",
+                idx, row, 0.5, "generic_time",
+                ["Verificar se operação realmente durou esse tempo",
+                 "Considerar paradas não registradas"]
+            )
+        
+        # Verificar produção zero com tempo
+        qtd_produzida = self._safe_float(row.get('qtd_produzida', 0))
+        if tempo_minutos > 30 and qtd_produzida == 0:
+            evento = str(row.get('evento', '')).lower()
+            if 'produção' in evento or 'producao' in evento:
+                self._add_ai_result(
+                    SeverityLevel.WARNING,
+                    "Produção zero com tempo significativo registrado",
+                    idx, row, 0.8, "generic_production",
+                    ["Verificar se houve parada não registrada",
+                     "Confirmar se quantidade foi preenchida"]
+                )
+    
+    def _detect_statistical_anomalies(self, df: pd.DataFrame):
+        """Detecta anomalias usando análise estatística simples"""
+        # Agrupar por máquina
+        for machine_name, machine_data in df.groupby('maquina'):
+            machine_data = machine_data.copy()
+            
+            # Detectar outliers em tempos
+            tempos = []
+            for tempo_str in machine_data['tempo']:
+                minutos = self._extract_time_minutes(str(tempo_str))
+                if minutos > 0:
+                    tempos.append(minutos)
+            
+            if len(tempos) > 10:  # precisa de dados suficientes
+                tempos_array = np.array(tempos)
+                q75, q25 = np.percentile(tempos_array, [75, 25])
+                iqr = q75 - q25
+                lower_bound = q25 - 1.5 * iqr
+                upper_bound = q75 + 1.5 * iqr
+                
+                for idx, row in machine_data.iterrows():
+                    tempo_minutos = self._extract_time_minutes(str(row.get('tempo', '00:00')))
+                    if tempo_minutos < lower_bound or tempo_minutos > upper_bound:
+                        self._add_ai_result(
+                            SeverityLevel.INFO,
+                            f"Tempo estatisticamente anômalo: {tempo_minutos}min",
+                            idx, row, 0.8, "statistical_outlier",
+                            [f"Faixa normal (IQR): {q25:.0f}-{q75:.0f}min",
+                             "Detectado por análise estatística automática"]
+                        )
+    
+    def _ai_validate_sequences(self, df: pd.DataFrame):
+        """Validação inteligente de sequências"""
+        for machine in df['maquina'].unique():
+            if pd.isna(machine):
+                continue
+            
+            machine_data = df[df['maquina'] == machine].copy()
+            machine_data = machine_data.sort_values('inicio')
+            
+            # Detectar padrões suspeitos de sequência
+            self._detect_sequence_anomalies(machine_data)
+    
+    def _detect_sequence_anomalies(self, machine_data: pd.DataFrame):
+        """Detecta anomalias em sequências de operações"""
+        setup_count = 0
+        production_count = 0
+        
+        for idx, row in machine_data.iterrows():
+            evento = str(row.get('evento', '')).lower()
+            processo = str(row.get('processo', '')).lower()
+            combined = f"{evento} {processo}"
+            
+            if self._is_likely_setup(combined):
+                setup_count += 1
+                if setup_count > 1 and production_count == 0:
+                    self._add_ai_result(
+                        SeverityLevel.WARNING,
+                        "Múltiplos setups sem produção intermediária",
+                        idx, row, 0.9, "sequence_anomaly",
+                        ["Padrão detectado automaticamente",
+                         "Verificar se setups anteriores foram cancelados"]
+                    )
+                production_count = 0  # reset contador de produção
+            
+            elif self._is_likely_production(combined):
+                production_count += 1
+                if production_count == 1 and setup_count == 0:
+                    self._add_ai_result(
+                        SeverityLevel.INFO,
+                        "Produção sem setup recente detectado",
+                        idx, row, 0.7, "sequence_pattern",
+                        ["Pode indicar continuidade de operação anterior",
+                         "Verificar se setup foi registrado corretamente"]
+                    )
+    
+    def _extract_time_minutes(self, time_str: str) -> int:
+        """Extração inteligente de tempo em minutos"""
+        if pd.isna(time_str) or not time_str:
+            return 0
+        
+        time_str = str(time_str).lower().strip()
+        
+        # Tentar vários padrões
+        for pattern in self.base_time_patterns:
+            match = re.search(pattern, time_str)
+            if match:
+                groups = match.groups()
+                
+                if 'h' in pattern and 'min' in pattern:  # 1h 30min
+                    hours = int(groups[0])
+                    minutes = int(groups[1]) if groups[1] else 0
+                    return hours * 60 + minutes
+                elif ':' in pattern:  # 1:30
+                    hours = int(groups[0])
+                    minutes = int(groups[1])
+                    return hours * 60 + minutes
+                elif 'min' in pattern:  # 90min
+                    return int(groups[0])
+                elif 'h' in pattern:  # 2h
+                    return int(groups[0]) * 60
+                elif 'p/h' in pattern or 'p h' in pattern:  # velocidade, não tempo
+                    continue
+        
+        return 0
+    
+    def _safe_float(self, value) -> float:
+        """Conversão segura para float"""
+        try:
+            if pd.isna(value):
+                return 0.0
+            return float(str(value).replace(',', '.'))
+        except:
+            return 0.0
+    
+    def _normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Normalização inteligente de colunas"""
+        df_norm = df.copy()
+        df_norm.columns = [col.lower().strip() for col in df_norm.columns]
+        
+        # Mapeamento flexível
+        column_mapping = {
+            r'início|inicio': 'inicio',
+            r'término|termino|fim': 'termino',
+            r'máquina|maquina|equipamento': 'maquina',
+            r'qtd\.?\s*recebida|quantidade\s*recebida': 'qtd_recebida',
+            r'qtd\.?\s*produzida|quantidade\s*produzida': 'qtd_produzida',
+            r'prod\.?\s*p?\/?h|produção\s*hora': 'prod_hora',
+            r'qtd\.?\s*entregue|quantidade\s*entregue': 'qtd_entregue',
+            r'observações|observacoes|obs': 'observacoes'
+        }
+        
+        for pattern, standard_name in column_mapping.items():
+            for col in df_norm.columns:
+                if re.search(pattern, col, re.IGNORECASE):
+                    df_norm = df_norm.rename(columns={col: standard_name})
+                    break
+        
+        return df_norm
+    
+    def _check_time_consistency(self, idx: int, row: pd.Series):
+        """Validação básica de consistência de tempo"""
+        try:
+            inicio = pd.to_datetime(row.get('inicio'))
+            termino = pd.to_datetime(row.get('termino'))
+            tempo_str = str(row.get('tempo', '00:00'))
+            
+            tempo_real = termino - inicio
+            tempo_informado_min = self._extract_time_minutes(tempo_str)
+            tempo_informado = timedelta(minutes=tempo_informado_min)
+            
+            diff_minutes = abs(tempo_real.total_seconds() - tempo_informado.total_seconds()) / 60
+            
+            if diff_minutes > 10:  # tolerância de 10 minutos
+                confidence = 0.9 if diff_minutes > 60 else 0.7
+                self._add_ai_result(
+                    SeverityLevel.WARNING,
+                    f"Discrepância de tempo: calculado {tempo_real} vs informado {tempo_informado}",
+                    idx, row, confidence, "time_consistency",
+                    ["Verificar se horários foram apontados corretamente",
+                     "Considerar intervalos não computados"]
+                )
+        except Exception:
+            self._add_ai_result(
+                SeverityLevel.ERROR,
+                "Erro ao processar horários - formato inválido",
+                idx, row, 1.0, "data_format",
+                ["Verificar formato de data/hora", "Corrigir dados inválidos"]
+            )
+    
+    def _check_data_completeness(self, idx: int, row: pd.Series):
+        """Verificação de completude com priorização inteligente"""
+        # Campos críticos vs opcionais
+        critical_fields = ['inicio', 'termino', 'evento', 'maquina']
+        important_fields = ['operador', 'tempo']
+        optional_fields = ['processo', 'qtd_produzida', 'qtd_recebida']
+        
+        missing_critical = []
+        missing_important = []
+        
+        for field in critical_fields:
+            if pd.isna(row.get(field)) or str(row.get(field)).strip() == '':
+                missing_critical.append(field)
+        
+        for field in important_fields:
+            if pd.isna(row.get(field)) or str(row.get(field)).strip() == '':
+                missing_important.append(field)
+        
+        if missing_critical:
+            self._add_ai_result(
+                SeverityLevel.ERROR,
+                f"Campos críticos ausentes: {', '.join(missing_critical)}",
+                idx, row, 1.0, "data_completeness",
+                ["Preencher campos obrigatórios para validação",
+                 "Sistema não pode funcionar sem estes dados"]
+            )
+        
+        if missing_important:
+            self._add_ai_result(
+                SeverityLevel.WARNING,
+                f"Campos importantes ausentes: {', '.join(missing_important)}",
+                idx, row, 0.8, "data_quality",
+                ["Dados incompletos reduzem precisão da análise",
+                 "Recomendado preencher para melhor controle"]
+            )
+    
+    def _add_ai_result(self, severity: SeverityLevel, message: str, idx: int, 
+                      row: pd.Series, confidence: float, pattern_type: str, 
+                      suggestions: List[str]):
+        """Adiciona resultado com informações de IA"""
+        self.results.append(ValidationResult(
+            severity=severity,
+            message=message,
+            row_index=idx,
+            machine=str(row.get('maquina', 'N/A')),
+            operator=str(row.get('operador', 'N/A')),
+            timestamp=str(row.get('inicio', 'N/A')),
+            suggestions=suggestions,
+            confidence=confidence,
+            pattern_type=pattern_type
+        ))
+    
+    def export_learned_patterns(self, filepath: str = "machine_patterns.json"):
+        """Exporta padrões aprendidos para reuso"""
+        export_data = {
+            'timestamp': datetime.now().isoformat(),
+            'machine_profiles': {},
+            'global_patterns': self.global_patterns
+        }
+        
+        for name, profile in self.machine_profiles.items():
+            export_data['machine_profiles'][name] = {
+                'setup_times': dict(profile.setup_times),
+                'production_speeds': profile.production_speeds,
+                'common_processes': dict(profile.common_processes),
+                'typical_operators': list(profile.typical_operators),
+                'setup_keywords': profile.setup_keywords,
+                'anomaly_thresholds': profile.anomaly_thresholds,
+                'last_updated': profile.last_updated.isoformat()
+            }
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(export_data, f, indent=2, ensure_ascii=False)
+        
+        return f"Padrões exportados para {filepath}"
+    
+    def import_learned_patterns(self, filepath: str):
+        """Importa padrões previamente aprendidos"""
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            self.global_patterns = data.get('global_patterns', {})
+            
+            for name, profile_data in data.get('machine_profiles', {}).items():
+                profile = MachineProfile(name=name)
+                profile.setup_times = profile_data.get('setup_times', {})
+                profile.production_speeds = profile_data.get('production_speeds', [])
+                profile.common_processes = Counter(profile_data.get('common_processes', {}))
+                profile.typical_operators = set(profile_data.get('typical_operators', []))
+                profile.setup_keywords = profile_data.get('setup_keywords', [])
+                profile.anomaly_thresholds = profile_data.get('anomaly_thresholds', {})
+                profile.last_updated = datetime.fromisoformat(profile_data.get('last_updated', datetime.now().isoformat()))
+                
+                self.machine_profiles[name] = profile
+            
+            return f"Padrões importados de {filepath}"
+        
+        except Exception as e:
+            return f"Erro ao importar padrões: {str(e)}"
+    
+    def generate_ai_report(self, results: List[ValidationResult] = None) -> str:
+        """Gera relatório inteligente com insights de IA"""
+        if results is None:
+            results = self.results
+        
+        if not results:
+            return "✅ Nenhuma anomalia detectada pela IA!"
+        
+        report = ["🤖 RELATÓRIO DE VALIDAÇÃO IA AVANÇADA", "=" * 55, ""]
+        
+        # Estatísticas de confiança
+        high_confidence = [r for r in results if r.confidence >= 0.8]
+        medium_confidence = [r for r in results if 0.5 <= r.confidence < 0.8]
+        low_confidence = [r for r in results if r.confidence < 0.5]
+        
+        report.append("📊 CONFIANÇA DA IA:")
+        report.append(f"   🎯 Alta confiança (≥80%): {len(high_confidence)} detecções")
+        report.append(f"   🔍 Média confiança (50-80%): {len(medium_confidence)} detecções")
+        report.append(f"   ❓ Baixa confiança (<50%): {len(low_confidence)} detecções")
+        report.append("")
+        
+        # Análise por tipo de padrão
+        pattern_counts = Counter(r.pattern_type for r in results)
+        report.append("🔍 TIPOS DE ANOMALIAS DETECTADAS:")
+        for pattern, count in pattern_counts.most_common():
+            emoji_map = {
+                'statistical_anomaly': '📈',
+                'performance_anomaly': '⚡',
+                'sequence_anomaly': '🔗',
+                'operator_pattern': '👨‍🔧',
+                'machine_pattern': '🏭',
+                'time_consistency': '⏰',
+                'data_completeness': '📝'
+            }
+            emoji = emoji_map.get(pattern, '🔍')
+            report.append(f"   {emoji} {pattern.replace('_', ' ').title()}: {count}")
+        report.append("")
+        
+        # Resumo por severidade
+        severity_counts = Counter(r.severity for r in results)
+        report.append("⚠️ SEVERIDADE:")
+        for severity, count in severity_counts.items():
+            emoji = {"INFO": "ℹ️", "WARNING": "⚠️", "ERROR": "❌", "CRITICAL": "🚨"}
+            report.append(f"   {emoji.get(severity.value)} {severity.value}: {count}")
+        report.append("")
+        
+        # Insights inteligentes
+        report.extend(self._generate_ai_insights(results))
+        
+        # Detalhes por máquina (só alta/média confiança)
+        priority_results = [r for r in results if r.confidence >= 0.5]
+        if priority_results:
+            report.extend(["", "🔍 DETECÇÕES PRIORITÁRIAS:", ""])
+            
+            by_machine = defaultdict(list)
+            for result in priority_results:
+                by_machine[result.machine].append(result)
+            
+            for machine, machine_results in by_machine.items():
+                report.append(f"🏭 {machine.upper()}")
+                report.append("-" * 40)
+                
+                for result in sorted(machine_results, key=lambda x: x.confidence, reverse=True):
+                    confidence_bar = "█" * int(result.confidence * 10)
+                    severity_emoji = {"INFO": "ℹ️", "WARNING": "⚠️", "ERROR": "❌", "CRITICAL": "🚨"}
+                    
+                    report.append(f"{severity_emoji.get(result.severity.value)} {result.message}")
+                    report.append(f"   📊 Confiança: {confidence_bar} {result.confidence:.1%}")
+                    report.append(f"   📅 {result.timestamp} | 👨‍🔧 {result.operator}")
+                    report.append(f"   🎯 Padrão: {result.pattern_type.replace('_', ' ')}")
+                    
+                    if result.suggestions:
+                        report.append("   💡 Ações recomendadas:")
+                        for suggestion in result.suggestions[:2]:  # limitar sugestões
+                            report.append(f"      • {suggestion}")
+                    report.append("")
+                
+                report.append("")
+        
+        # Máquinas aprendidas
+        if self.machine_profiles:
+            report.extend(["", "🧠 CONHECIMENTO ADQUIRIDO:", ""])
+            for name, profile in self.machine_profiles.items():
+                setup_count = sum(len(times) for times in profile.setup_times.values())
+                speed_count = len(profile.production_speeds)
+                
+                report.append(f"🏭 {name.upper()}:")
+                report.append(f"   📚 {setup_count} setups analisados")
+                report.append(f"   ⚡ {speed_count} velocidades registradas")
+                report.append(f"   👥 {len(profile.typical_operators)} operadores conhecidos")
+                
+                if profile.anomaly_thresholds:
+                    if 'setup_mean' in profile.anomaly_thresholds:
+                        report.append(f"   ⏱️ Setup médio: {profile.anomaly_thresholds['setup_mean']:.0f}min")
+                    if 'speed_mean' in profile.anomaly_thresholds:
+                        report.append(f"   🚀 Velocidade média: {profile.anomaly_thresholds['speed_mean']:.0f} p/h")
+                
+                report.append("")
+        
+        return "\n".join(report)
+    
+    def _generate_ai_insights(self, results: List[ValidationResult]) -> List[str]:
+        """Gera insights inteligentes baseados nos padrões detectados"""
+        insights = ["🧠 INSIGHTS DA IA:", ""]
+        
+        # Análise temporal
+        high_conf_results = [r for r in results if r.confidence >= 0.7]
+        if len(high_conf_results) > len(results) * 0.6:
+            insights.append("✅ Alta confiança geral nas detecções - dados consistentes com padrões históricos")
+        else:
+            insights.append("⚠️ Muitas detecções com baixa confiança - possível mudança nos padrões ou dados atípicos")
+        
+        # Análise de máquinas
+        machine_issues = defaultdict(int)
+        for result in results:
+            if result.severity in [SeverityLevel.WARNING, SeverityLevel.ERROR]:
+                machine_issues[result.machine] += 1
+        
+        if machine_issues:
+            worst_machine = max(machine_issues.items(), key=lambda x: x[1])
+            insights.append(f"🎯 Máquina com mais anomalias: {worst_machine[0]} ({worst_machine[1]} problemas)")
+        
+        # Análise de padrões
+        pattern_counts = Counter(r.pattern_type for r in results)
+        if pattern_counts:
+            top_pattern = pattern_counts.most_common(1)[0]
+            pattern_desc = {
+                'statistical_anomaly': 'anomalias estatísticas - valores fora do padrão histórico',
+                'performance_anomaly': 'problemas de performance - velocidades atípicas',
+                'sequence_anomaly': 'problemas de sequência - fluxo irregular de operações',
+                'operator_pattern': 'padrões de operador - turnos ou pessoas atípicas',
+                'time_consistency': 'inconsistências de tempo - discrepâncias nos horários'
+            }
+            desc = pattern_desc.get(top_pattern[0], 'padrão não categorizado')
+            insights.append(f"🔍 Padrão mais comum: {desc}")
+        
+        # Recomendações
+        insights.extend(["", "💡 RECOMENDAÇÕES GERAIS:"])
+        
+        error_count = len([r for r in results if r.severity == SeverityLevel.ERROR])
+        if error_count > 0:
+            insights.append("🚨 Corrigir erros críticos primeiro - podem afetar confiabilidade do sistema")
+        
+        if len(self.machine_profiles) < 3:
+            insights.append("📈 Coletar mais dados históricos para melhorar precisão da IA")
+        
+        low_conf_count = len([r for r in results if r.confidence < 0.5])
+        if low_conf_count > len(results) * 0.3:
+            insights.append("🎯 Revisar manualmente detecções de baixa confiança")
+        
+        insights.append("")
+        return insights
+
+# Classe auxiliar para análise avançada
+class ProductionAnalytics:
+    """Análises avançadas de produção usando os dados validados"""
+    
+    def __init__(self, validator: SmartProductionValidator):
+        self.validator = validator
+    
+    def analyze_efficiency_trends(self, df: pd.DataFrame) -> Dict[str, Any]:
+        """Analisa tendências de eficiência por máquina"""
+        df = self.validator._normalize_columns(df)
+        trends = {}
+        
+        for machine in df['maquina'].unique():
+            if pd.isna(machine):
+                continue
+            
+            machine_data = df[df['maquina'] == machine].copy()
+            machine_data['date'] = pd.to_datetime(machine_data['inicio']).dt.date
+            
+            daily_efficiency = []
+            for date, day_data in machine_data.groupby('date'):
+                total_time = 0
+                total_production = 0
+                
+                for _, row in day_data.iterrows():
+                    tempo_min = self.validator._extract_time_minutes(str(row.get('tempo', '0')))
+                    qtd_prod = self.validator._safe_float(row.get('qtd_produzida', 0))
+                    
+                    if 'produção' in str(row.get('evento', '')).lower():
+                        total_time += tempo_min
+                        total_production += qtd_prod
+                
+                if total_time > 0:
+                    efficiency = (total_production / total_time) * 60  # peças/hora
+                    daily_efficiency.append({'date': date, 'efficiency': efficiency})
+            
+            if daily_efficiency:
+                trends[machine] = {
+                    'daily_data': daily_efficiency,
+                    'avg_efficiency': np.mean([d['efficiency'] for d in daily_efficiency]),
+                    'trend_direction': self._calculate_trend([d['efficiency'] for d in daily_efficiency])
+                }
+        
+        return trends
+    
+    def _calculate_trend(self, values: List[float]) -> str:
+        """Calcula direção da tendência"""
+        if len(values) < 3:
+            return "insufficient_data"
+        
+        x = np.arange(len(values))
+        slope = np.polyfit(x, values, 1)[0]
+        
+        if slope > 0.1:
+            return "improving"
+        elif slope < -0.1:
+            return "declining"
+        else:
+            return "stable"
+    
+    def detect_bottlenecks(self, df: pd.DataFrame) -> List[Dict[str, Any]]:
+        """Detecta gargalos de produção"""
+        df = self.validator._normalize_columns(df)
+        bottlenecks = []
+        
+        # Analisar tempos de setup por máquina
+        for machine in df['maquina'].unique():
+            if pd.isna(machine):
+                continue
+            
+            machine_data = df[df['maquina'] == machine]
+            setup_times = []
+            
+            for _, row in machine_data.iterrows():
+                evento = str(row.get('evento', '')).lower()
+                if 'acerto' in evento or 'setup' in evento:
+                    tempo_min = self.validator._extract_time_minutes(str(row.get('tempo', '0')))
+                    if tempo_min > 0:
+                        setup_times.append(tempo_min)
+            
+            if setup_times:
+                avg_setup = np.mean(setup_times)
+                if avg_setup > 120:  # mais de 2 horas
+                    bottlenecks.append({
+                        'machine': machine,
+                        'type': 'long_setup',
+                        'avg_time': avg_setup,
+                        'impact': 'high' if avg_setup > 180 else 'medium'
+                    })
+        
+        return bottlenecks
+
+# Exemplo de uso avançado
+def advanced_example():
+    """Exemplo de uso do sistema IA avançado"""
+    
+    # Dados de exemplo mais complexos
+    sample_data = {
+        'inicio': [
+            '06/06/2025 08:04', '06/06/2025 09:06', '06/06/2025 09:14',
+            '06/06/2025 10:30', '06/06/2025 11:45', '06/06/2025 13:00',
+            '07/06/2025 08:00', '07/06/2025 09:30', '07/06/2025 10:15'
+        ],
+        'termino': [
+            '06/06/2025 09:06', '06/06/2025 09:14', '06/06/2025 10:20',
+            '06/06/2025 11:30', '06/06/2025 12:45', '06/06/2025 14:30',
+            '07/06/2025 09:15', '07/06/2025 10:10', '07/06/2025 12:00'
+        ],
+        'tempo': [
+            '01:01', '00:07', '01:06', '01:00', '01:00', '01:30',
+            '01:15', '00:40', '01:45'
+        ],
+        'evento': [
+            '01 Acerto', '02 Produção', '0 Ocioso',
+            '01 Acerto', '02 Produção', '02 Produção',
+            '01 Acerto', '02 Produção', '02 Produção'
+        ],
+        'processo': [
+            '1 h 30 min - Speedmaster CD102', 'CMYK', 'AGUARDANDO PAPEL',
+            'faca nova - Bobst Diana', 'Corte e vinco', 'Corte e vinco',
+            'acerto verniz - Sakurai SC102', 'Verniz UV', 'Verniz UV'
+        ],
+        'qtd_recebida': [0, 789, 0, 0, 1200, 800, 0, 500, 300],
+        'qtd_produzida': [0, 729, 0, 0, 1150, 780, 0, 480, 290],
+        'maquina': [
+            'Speedmaster CD 102', 'Speedmaster CD 102', 'Speedmaster CD 102',
+            'Bobst Diana 1050', 'Bobst Diana 1050', 'Bobst Diana 1050',
+            'Sakurai SC 102', 'Sakurai SC 102', 'Sakurai SC 102'
+        ],
+        'operador': [
+            'Augusto', 'Augusto', 'Augusto',
+            'Carlos', 'Carlos', 'Maria',
+            'João', 'João', 'Pedro'
+        ]
+    }
+    
+    df = pd.DataFrame(sample_data)
+    
+    # Criar validador IA
+    ai_validator = SmartProductionValidator()
+    
+    # Fase 1: Aprender padrões
+    print("🧠 APRENDENDO PADRÕES...")
+    learning_report = ai_validator.analyze_and_learn(df)
+    print(f"Máquinas descobertas: {learning_report['machines_discovered']}")
+    print(f"Confiança: {learning_report['confidence_level']:.1%}")
+    
+    # Fase 2: Validar com IA
+    print("\n🔍 VALIDANDO COM IA...")
+    results = ai_validator.validate_with_ai(df)
+    
+    # Relatório IA
+    print(ai_validator.generate_ai_report(results))
+    
+    # Análise avançada
+    analytics = ProductionAnalytics(ai_validator)
+    trends = analytics.analyze_efficiency_trends(df)
+    bottlenecks = analytics.detect_bottlenecks(df)
+    
+    if trends:
+        print("📈 ANÁLISE DE EFICIÊNCIA:")
+        for machine, data in trends.items():
+            print(f"   {machine}: {data['avg_efficiency']:.0f} p/h ({data['trend_direction']})")
+    
+    if bottlenecks:
+        print("\n🚫 GARGALOS DETECTADOS:")
+        for bottleneck in bottlenecks:
+            print(f"   {bottleneck['machine']}: {bottleneck['type']} ({bottleneck['avg_time']:.0f}min)")
+    
+    # Exportar conhecimento
+    ai_validator.export_learned_patterns("ai_patterns.json")
+    print("\n💾 Padrões salvos em 'ai_patterns.json'")
+
+if __name__ == "__main__":
+    advanced_example()
