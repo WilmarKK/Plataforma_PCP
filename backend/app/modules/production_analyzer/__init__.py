@@ -1,0 +1,1 @@
+# Módulo Production Analyzer - Análise de Produção Industrial 

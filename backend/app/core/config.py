@@ -1,5 +1,5 @@
 """
-config.py - Configurações globais da aplicação AnalisadorProducaoWeb
+config.py - Configurações globais da aplicação PlataformaPCP
 
 Este módulo centraliza todas as configurações do projeto, incluindo variáveis de ambiente,
 parâmetros de conexão, segurança e ajustes gerais. Use este arquivo para escalar e manter
@@ -19,10 +19,10 @@ class Settings(BaseSettings):
     Classe de configurações principais do sistema.
     Utiliza Pydantic para validação e carregamento de variáveis de ambiente.
     """
-    APP_NAME: str = "AnalisadorProducaoWeb"  # Removido o caractere especial 'ç'
+    APP_NAME: str = "PlataformaPCP"  # Atualizado para novo nome do projeto
     DEBUG: bool = True
     SECRET_KEY: str = os.getenv("SECRET_KEY", "changeme")
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/analisador_producao")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/plataformapcp")
     ALLOWED_ORIGINS: list[str] = ["*"]
     API_V1_STR: str = "/api/v1"
 

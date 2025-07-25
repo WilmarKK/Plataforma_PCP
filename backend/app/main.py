@@ -1,5 +1,7 @@
+# PlataformaPCP - Backend Modular
+# Este projeto segue arquitetura modularizada, com múltiplos módulos em app/modules.
 """
-main.py - Inicialização da aplicação FastAPI para o AnalisadorProducaoWeb
+main.py - Inicialização da aplicação FastAPI para o PlataformaPCP
 
 Este arquivo contém a configuração básica do servidor FastAPI,
 seguindo as melhores práticas de estrutura e tipagem.
@@ -20,7 +22,7 @@ def create_app() -> FastAPI:
         FastAPI: instância configurada da aplicação.
     """
     app = FastAPI(
-        title="AnalisadorProducaoWeb",
+        title="PlataformaPCP",
         description="Dashboard de Análise de Produção Industrial",
         version="1.0.0",
         docs_url="/docs",

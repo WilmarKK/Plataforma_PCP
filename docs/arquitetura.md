@@ -1,6 +1,6 @@
 # Arquitetura do Sistema
 
-O sistema AnalisadorProduçãoWeb é composto por:
+O sistema PlataformaPCP é composto por:
 - **Frontend:** React 18 + TypeScript + Tailwind CSS
 - **Backend:** FastAPI + Python + SQLAlchemy
 - **Banco de Dados:** PostgreSQL

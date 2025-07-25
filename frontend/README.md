@@ -39,6 +39,18 @@ src/
 4. Utilize componentes e hooks do core sempre que possível.
 5. Documente o módulo com README e comentários claros.
 
+### Build e Deploy com Docker
+
+Para buildar e rodar o frontend em ambiente Docker:
+
+1. Certifique-se de que o `Dockerfile` está presente em `frontend/`.
+2. Execute:
+   ```bash
+   docker build -t pcp-frontend .
+   docker run -p 3000:80 pcp-frontend
+   ```
+3. O frontend estará disponível em `http://localhost:3000` (ou porta configurada).
+
 ### Padrões e Boas Práticas
 - Design system centralizado em `core/components/`
 - Autenticação e permissões em `core/services/`

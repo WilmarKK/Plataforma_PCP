@@ -1,8 +1,8 @@
 -- init.sql - Script de inicialização do banco de dados
--- Cria o banco de dados e o usuário padrão para o AnalisadorProduçãoWeb
+-- Cria o banco de dados e o usuário padrão para o PlataformaPCP
 
-CREATE DATABASE analisador_producao;
+CREATE DATABASE plataformapcp;
 
 -- Usuário padrão (ajuste a senha conforme necessário)
 CREATE USER analisador_user WITH ENCRYPTED PASSWORD 'senha_segura';
-GRANT ALL PRIVILEGES ON DATABASE analisador_producao TO analisador_user; 
+GRANT ALL PRIVILEGES ON DATABASE plataformapcp TO analisador_user; 

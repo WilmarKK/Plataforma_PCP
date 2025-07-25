@@ -1,3 +1,5 @@
+// PlataformaPCP - Frontend Modular
+// Este projeto segue arquitetura modularizada, com múltiplos módulos em src/modules.
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'

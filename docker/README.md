@@ -1,4 +1,4 @@
-# Docker & DevOps - AnalisadorProducaoWeb
+# Docker & DevOps - PlataformaPCP
 
 Esta pasta contém scripts e instruções para build, deploy e gerenciamento do ambiente Docker do projeto.
 

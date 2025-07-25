@@ -19,7 +19,7 @@ USERNAME = "postgres"
 PASSWORD = "wilmarsoller21052025"
 HOST = "localhost"
 PORT = 5432
-DATABASE = "analisador_producao"
+DATABASE = "plataformapcp"
 
 print("=== TESTE COM SUAS CREDENCIAIS ===")
 print(f"Usuário: {USERNAME}")
@@ -181,9 +181,9 @@ def create_database():
             port=PORT,
             database="postgres",
             user=USERNAME,
-            password=PASSWORD,
-            autocommit=True
+            password=PASSWORD
         )
+        conn.autocommit = True
         
         cursor = conn.cursor()
         cursor.execute(f'CREATE DATABASE "{DATABASE}";')

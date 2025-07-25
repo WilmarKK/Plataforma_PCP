@@ -8,7 +8,7 @@ services:
     container_name: analisador-backend
     restart: unless-stopped
     environment:
-      - DATABASE_URL=postgresql://postgres:wilmarsoller21052025@database:5432/analisador_producao
+      - DATABASE_URL=postgresql://postgres:wilmarsoller21052025@database:5432/plataformapcp
       - SECRET_KEY=your-secret-key-here
     depends_on:
       - database
@@ -36,7 +36,7 @@ services:
     container_name: analisador-db
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=analisador_producao
+      - POSTGRES_DB=plataformapcp
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=wilmarsoller21052025
     volumes:

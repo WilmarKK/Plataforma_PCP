@@ -1,8 +1,8 @@
-# 📋 PLANO COMPLETO - AnalisadorProduçãoWeb
+# 📋 PLANO COMPLETO - PlataformaPCP
 
-> **Projeto:** Sistema de Análise de Produção Industrial  
-> **Público:** PCP + Direção (< 10 usuários)  
-> **Tipo:** Dashboard Premium com Análise de Dados  
+> **Projeto:** Plataforma Modular de Ferramentas Industriais  
+> **Público:** PCP, Manutenção, Qualidade, Direção (< 50 usuários)  
+> **Tipo:** Plataforma Premium Modular com Análise de Dados, Manutenção, Estoque, Qualidade e mais  
 > **Data:** Julho 2025
 
 ---
@@ -10,12 +10,14 @@
 ## 🎯 VISÃO GERAL DO PROJETO
 
 ### **O que vamos construir:**
-Um dashboard moderno e seguro para análise de produção industrial, com:
+Uma plataforma moderna, segura e modular para gestão e análise industrial, com:
 - Interface premium (glassmorphism + micro-animações)
+- Múltiplos módulos: Análise de Produção, Manutenção, Estoque, Qualidade, Integrações, etc.
 - Análise de dados em tempo real
 - Gráficos interativos e relatórios
 - Fórmulas personalizáveis
 - Segurança industrial robusta
+- Pronta para internacionalização e multi-tenant
 
 ### **Inspirações de Design:**
 - **Vercel Dashboard** - Simplicidade e elegância
@@ -29,21 +31,36 @@ Um dashboard moderno e seguro para análise de produção industrial, com:
 ## 🏗️ ARQUITETURA DO PROJETO
 
 ```
-📦 analisador-producao/
-├── 📁 frontend/              # React + TypeScript
-├── 📁 backend/               # Python + FastAPI  
-├── 📁 database/              # PostgreSQL scripts
-├── 📁 docs/                  # Documentação
-├── 📁 docker/                # Containers
-├── 📁 scripts/               # Automações
-├── 📄 docker-compose.yml     # Orquestração local
-├── 📄 .env.example          # Variáveis de ambiente
-└── 📄 README.md             # Documentação principal
+📦 PlataformaPCP/
+├── frontend/              # React + TypeScript (modular)
+├── backend/               # Python + FastAPI (modular)
+├── database/              # PostgreSQL scripts
+├── docs/                  # Documentação
+├── docker/                # Containers
+├── scripts/               # Automações
+├── docker-compose.yml     # Orquestração local
+├── .env.example           # Variáveis de ambiente
+└── README.md              # Documentação principal
 ```
 
 ---
 
-## 🎨 FRONTEND - Interface Premium
+## 🎨 FRONTEND - Interface Modular Premium
+
+### **Estrutura Modular Sugerida:**
+```plaintext
+frontend/
+  src/
+    modules/
+      productionAnalyzer/
+      maintenance/
+      inventory/
+      quality/
+    core/
+    shared/
+    layout/
+    App.tsx
+```
 
 ### **Linguagens & Core:**
 - ✅ **React 18** - Framework principal
@@ -120,7 +137,21 @@ npm install axios immer date-fns
 
 ---
 
-## 🔧 BACKEND - Engine de Dados
+## 🔧 BACKEND - Engine Modular de Dados
+
+### **Estrutura Modular Sugerida:**
+```plaintext
+backend/
+  app/
+    modules/
+      production_analyzer/
+      maintenance/
+      inventory/
+      quality/
+    core/
+    shared/
+    main.py
+```
 
 ### **Linguagem & Framework:**
 - ✅ **Python 3.11+** - Performance e bibliotecas
@@ -177,54 +208,19 @@ pip install celery redis python-crontab
 
 ---
 
-## 🗄️ BANCO DE DADOS
+## 🗄️ BANCO DE DADOS MODULAR
 
-### **Sistema Principal:**
-- ✅ **PostgreSQL 15** - Banco relacional robusto
-- ✅ **Redis** - Cache e sessões
-- ✅ **Backup automático** - Scripts diários
-
-### **Schema Básico:**
-```sql
--- Usuários
-users (id, email, password_hash, role, created_at)
-
--- Produção
-production_data (id, date, product, quantity, efficiency, defects)
-
--- Fórmulas personalizadas  
-formulas (id, name, expression, user_id, created_at)
-
--- Logs de auditoria
-audit_logs (id, user_id, action, table_name, old_data, new_data, timestamp)
-```
+- Tabelas separadas por domínio (produção, manutenção, estoque, qualidade, etc.)
+- Usuários, permissões e logs centralizados
+- Pronto para multi-tenant e internacionalização
 
 ---
 
-## 🔐 SEGURANÇA INDUSTRIAL
+## 🔐 SEGURANÇA INDUSTRIAL E MULTIMÓDULOS
 
-### **Autenticação:**
-- ✅ **JWT Tokens** (2h expiração)
-- ✅ **Refresh Tokens** (7 dias)
-- ✅ **IP Whitelist** (apenas IPs da empresa)
-- ✅ **Sessão única** por usuário
-
-### **Autorização:**
-- ✅ **RBAC** (Admin, Manager, Viewer)
-- ✅ **Permissões granulares** por módulo
-- ✅ **Audit Trail** de todas as ações
-
-### **Proteção de Dados:**
-- ✅ **HTTPS obrigatório** (SSL/TLS)
-- ✅ **Dados sensíveis criptografados** (AES-256)
-- ✅ **Rate Limiting** (100 req/min por IP)
-- ✅ **Input Validation** (Pydantic + Zod)
-
-### **Compliance LGPD:**
-- ✅ **Consentimento** ao primeiro login
-- ✅ **Logs de acesso** (quem, quando, o quê)
-- ✅ **Direito ao esquecimento**
-- ✅ **Relatório de dados** por usuário
+- Autenticação e RBAC centralizados
+- Permissões granulares por módulo
+- Audit trail e compliance LGPD
 
 ---
 
@@ -246,7 +242,7 @@ services:
   database:
     image: postgres:15
     environment:
-      POSTGRES_DB: analisador_producao
+      POSTGRES_DB: plataformapcp
       
   redis:
     image: redis:alpine
@@ -285,80 +281,31 @@ services:
 
 ---
 
-## ✅ CHECKLIST DE IMPLEMENTAÇÃO
+## ✅ CHECKLIST DE MODULARIZAÇÃO
 
-### Fase 1: Setup Inicial (Semana 1)
-- [x] Criar estrutura de pastas
-- [x] Setup React + TypeScript + Vite *(estrutura criada, frontend ainda não iniciado)*
-- [x] Setup FastAPI + PostgreSQL
-- [x] Docker Compose estruturado *(estrutura pronta, não testado em produção)*
-- [x] Primeiro deploy local
-
-### Fase 2: Autenticação (Semana 2)
-- [ ] Sistema de login/logout
-- [ ] JWT implementado
-- [ ] Middleware de autenticação
-- [ ] Tela de login com design premium
-- [ ] Proteção de rotas
-
-### Fase 3: UI Foundation (Semana 3)
-- [ ] Design System (cores, tipografia, espaçamentos)
-- [ ] Componentes base (Button, Input, Card)
-- [ ] Layout principal (Header, Sidebar, Main)
-- [ ] Dark/Light theme
-- [ ] Responsividade mobile
-
-### Fase 4: Dashboard Principal (Semana 4)
-- [ ] Cards de métricas principais
-- [ ] Gráficos básicos (linha, barra, pizza)
-- [ ] Tabela de dados
-- [ ] Filtros por data/produto
-- [ ] Animações e micro-interações
-
-### Fase 5: Análise de Dados (Semana 5)
-- [ ] Upload de dados (CSV/Excel)
-- [ ] Fórmulas personalizáveis
-- [ ] Relatórios PDF
-- [ ] Comparações temporais
-- [ ] Alertas e notificações
-
-### Fase 6: Features Avançadas (Semana 6)
-- [ ] Drill-down em gráficos
-- [ ] Export de dados
-- [ ] Configurações de usuário
-- [ ] Logs de auditoria
-- [ ] Performance otimizada
-
-### Fase 7: Segurança & Deploy (Semana 7)
-- [ ] SSL implementado
-- [ ] Rate limiting ativo
-- [ ] Backup automático
-- [ ] Monitoring básico
-- [ ] Deploy em produção
-
-### Fase 8: Testes & Refinamento (Semana 8)
-- [x] Testes E2E *(backend testado, frontend ainda não)*
-- [x] Correção de bugs *(backend)*
-- [x] Documentação final *(backend e banco)*
-- [ ] Treinamento usuários
-- [ ] Go-live!
+1. [ ] Listar módulos atuais e futuros
+2. [ ] Refatorar estrutura de pastas backend/frontend
+3. [ ] Migrar código do “Analisador de Produção” para um módulo próprio
+4. [ ] Centralizar autenticação, usuários e permissões
+5. [ ] Adaptar rotas, models e serviços para ficarem dentro dos módulos
+6. [ ] Atualizar documentação e exemplos
+7. [ ] Implementar testes e pipelines modulares
+8. [ ] Preparar frontend para navegação modular
+9. [ ] Garantir internacionalização desde o início
+10. [ ] Automatizar onboarding de novos módulos
 
 ---
 
 ## 🟢 Progresso Atual
 - Estrutura de backend, banco e documentação completa.
-- Testes automatizados robustos para backend.
-- Scripts de seed e schema versionados.
-- Diagrama ER e exemplos de queries documentados.
-- Pronto para iniciar frontend e autenticação.
+- Pronto para iniciar modularização e novos módulos.
 
 ## 🟡 Próximos Passos
-- Iniciar frontend premium (React, Tailwind, integração com API)
-- Implementar autenticação (JWT, login/logout, proteção de rotas)
-- Evoluir dashboard, gráficos e filtros
-- Testar Docker Compose e preparar para deploy
-- Automatizar deploy (CI/CD)
-- Adicionar testes E2E no frontend
+- Modularizar backend e frontend
+- Migrar Analisador de Produção para módulo próprio
+- Criar estrutura para novos módulos (ex: manutenção)
+- Atualizar documentação e exemplos
+- Testar Docker Compose e preparar para deploy modular
 
 ---
 

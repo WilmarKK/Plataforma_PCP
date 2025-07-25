@@ -1,6 +1,6 @@
-# Documentação Técnica - AnalisadorProduçãoWeb
+# Documentação Técnica - PlataformaPCP
 
-Bem-vindo à documentação técnica do projeto AnalisadorProduçãoWeb!
+Bem-vindo à documentação técnica do projeto PlataformaPCP!
 
 Aqui você encontra tudo sobre arquitetura, fluxos, API, integrações, banco de dados e manuais do sistema.
 
@@ -17,7 +17,7 @@ Aqui você encontra tudo sobre arquitetura, fluxos, API, integrações, banco de
 
 ## Visão Geral e Setup
 
-O AnalisadorProduçãoWeb é um sistema de análise de produção industrial, com backend em FastAPI/Python e frontend em React/TypeScript. O backend expõe uma API REST para cadastro e análise de máquinas industriais, e o frontend permite visualização e administração dos dados.
+O PlataformaPCP é um sistema de análise de produção industrial, com backend em FastAPI/Python e frontend em React/TypeScript. O backend expõe uma API REST para cadastro e análise de máquinas industriais, e o frontend permite visualização e administração dos dados.
 
 Para detalhes de setup, consulte o README na raiz e no backend/frontend.
 

@@ -1,4 +1,4 @@
--- schema.sql - Estrutura das tabelas principais do AnalisadorProducaoWeb
+-- schema.sql - Estrutura das tabelas principais do PlataformaPCP
 
 -- =====================
 -- Tabela de usuários

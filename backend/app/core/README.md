@@ -1,4 +1,4 @@
-# Core do Backend - AnalisadorProducaoWeb
+# Core do Backend - PlataformaPCP
 
 Este diretório centraliza as configurações, scripts utilitários e arquivos essenciais para o funcionamento do backend.
 

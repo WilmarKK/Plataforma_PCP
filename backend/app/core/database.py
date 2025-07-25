@@ -39,7 +39,7 @@ print(f"File system encoding: {sys.getfilesystemencoding()}")
 print(f"PGCLIENTENCODING: {os.environ.get('PGCLIENTENCODING')}")
 
 # Importação direta da configuração para evitar imports circulares
-DATABASE_URL = "postgresql://postgres:wilmarsoller21052025@localhost:5432/analisador_producao"
+DATABASE_URL = "postgresql://postgres:wilmarsoller21052025@localhost:5432/plataformapcp"
 
 # Criação da engine SQLAlchemy
 engine = create_engine(

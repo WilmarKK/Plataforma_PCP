@@ -1,4 +1,4 @@
-# 🚀 INSTRUÇÕES PARA INÍCIO DO PROJETO - AnalisadorProduçãoWeb
+# 🚀 INSTRUÇÕES PARA INÍCIO DO PROJETO - PlataformaPCP
 
 > **Para o próximo chat:** Estas são as instruções COMPLETAS para começar o projeto de forma profissional e ordenada.
 
@@ -7,7 +7,7 @@
 ## 📋 CONTEXTO DO PROJETO
 
 ### **O que estamos construindo:**
-- **Sistema:** AnalisadorProduçãoWeb - Dashboard de Análise de Produção Industrial
+- **Sistema:** PlataformaPCP - Dashboard de Análise de Produção Industrial
 - **Usuários:** PCP + Direção (< 10 usuários concorrentes)
 - **Dados:** Milhares de registros, delay até 5min aceitável
 - **Visual:** Premium como Vercel/Linear/Notion - glassmorphism + micro-animações
@@ -27,8 +27,8 @@
 
 ### **1. Criar Estrutura de Pastas**
 ```bash
-mkdir analisador-producao
-cd analisador-producao
+mkdir plataforma-pcp
+cd plataforma-pcp
 
 # Criar estrutura completa
 mkdir frontend backend database docs docker scripts
@@ -81,7 +81,7 @@ touch init.sql schema.sql seed.sql
 ## 📁 ESTRUTURA DE ARQUIVOS OBRIGATÓRIA
 
 ```
-analisador-producao/
+plataforma-pcp/
 ├── 📁 frontend/
 │   ├── 📁 src/
 │   │   ├── 📁 components/
@@ -248,7 +248,7 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@database:5432/analisador_producao
+      - DATABASE_URL=postgresql://postgres:postgres@database:5432/plataforma_pcp
       - SECRET_KEY=your-secret-key-here
     depends_on:
       - database
@@ -257,7 +257,7 @@ services:
   database:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_DB=analisador_producao
+      - POSTGRES_DB=plataforma_pcp
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -312,8 +312,8 @@ volumes:
 ### **Para começar IMEDIATAMENTE:**
 ```bash
 # 1. Clonar estrutura
-git clone [seu-repo] analisador-producao
-cd analisador-producao
+git clone [seu-repo] plataforma-pcp
+cd plataforma-pcp
 
 # 2. Instalar dependências
 cd frontend && npm install
@@ -445,7 +445,7 @@ animações suaves e integração com a API"
 **🎯 MISSÃO:** Criar o dashboard de produção mais moderno e funcional que a empresa já teve!
 
 **📞 FRASE MÁGICA PARA COMEÇAR:**
-*"Olá! Estou continuando o projeto AnalisadorProduçãoWeb. Já tenho todo o planejamento pronto. Vamos começar criando a estrutura inicial dos arquivos seguindo as instruções que tenho aqui. Por favor, crie primeiro o arquivo..."*
+*"Olá! Estou continuando o projeto PlataformaPCP. Já tenho todo o planejamento pronto. Vamos começar criando a estrutura inicial dos arquivos seguindo as instruções que tenho aqui. Por favor, crie primeiro o arquivo..."*
 
 ---
 

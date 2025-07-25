@@ -1,4 +1,4 @@
-# Scripts SQL - AnalisadorProducaoWeb
+# Scripts SQL - PlataformaPCP
 
 Esta pasta contém os scripts de inicialização, estrutura e dados de exemplo do banco de dados PostgreSQL do projeto.
 
@@ -15,8 +15,8 @@ Esta pasta contém os scripts de inicialização, estrutura e dados de exemplo d
 Exemplo usando psql:
 ```bash
 psql -U postgres -f init.sql
-psql -U analisador_user -d analisador_producao -f schema.sql
-psql -U analisador_user -d analisador_producao -f seed.sql
+psql -U analisador_user -d plataformapcp -f schema.sql
+psql -U analisador_user -d plataformapcp -f seed.sql
 ```
 
 ## Estrutura das Tabelas
