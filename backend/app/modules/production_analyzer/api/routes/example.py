@@ -8,11 +8,16 @@ from app.modules.production_analyzer.schemas.example import ExampleCreate, Examp
 from app.modules.production_analyzer.services.example_service import create_example
 from app.core.database import get_db
 
-router = APIRouter()
+router = APIRouter(prefix="/examples", tags=["examples"])
 
-@router.post("/examples/", response_model=ExampleRead)
+@router.post("/", response_model=ExampleRead)
 def create_example_endpoint(
     example_in: ExampleCreate,
     db: Session = Depends(get_db)
 ):
-    return create_example(db, example_in) 
+    return create_example(db, example_in)
+
+@router.get("/")
+async def get_examples():
+    """Lista todos os exemplos"""
+    return {"message": "Lista de exemplos"}

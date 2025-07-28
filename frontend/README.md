@@ -1,62 +1,154 @@
-# Plataforma PCP - Frontend
+# PlataformaPCP - Frontend
 
-## Arquitetura Modular
+## 🏭 Gestão Industrial Inteligente
 
-Este projeto segue o padrão enterprise de plataforma, onde cada ferramenta (módulo) do PCP é independente, mas compartilha núcleo de layout, autenticação, tema e design system.
+Plataforma modular completa para análise de produção, manutenção, estoque e qualidade. Transforme dados em decisões estratégicas.
 
-### Estrutura de Pastas
+## 🚀 Tecnologias
+
+- **React 18** - Framework principal
+- **TypeScript** - Tipagem estática + segurança
+- **Vite** - Build tool ultrarrápido
+- **React Router** - Roteamento
+- **Lucide React** - Ícones modernos
+- **CSS Modules** - Estilos organizados
+
+## 📁 Estrutura do Projeto
+
 ```
-src/
-  core/         # Layout, autenticação, temas, design system, hooks e serviços globais
-    layout/
-    components/
-    services/
-    store/
-    hooks/
-    types/
-    utils/
-  modules/      # Cada ferramenta do PCP é um módulo independente
-    analisadorProducao/
-      pages/
-      components/
-      services/
-      store/
-      hooks/
-      types/
-      utils/
-    # estoque/, planejamento/, ordens/, relatorios/, etc.
-  routes/       # Definição central das rotas da plataforma
-  assets/
-  App.tsx
-  main.tsx
-  index.css
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── app/                    # Configuração da aplicação
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── router.tsx
+│   ├── core/                   # Configurações centrais
+│   │   ├── config/             # Constantes e configurações
+│   │   ├── types/              # Tipos TypeScript globais
+│   │   └── utils/              # Utilitários gerais
+│   ├── shared/                 # Componentes e recursos compartilhados
+│   │   ├── components/         # Componentes reutilizáveis
+│   │   │   ├── ui/             # Componentes de interface
+│   │   │   └── layout/         # Componentes de layout
+│   │   ├── hooks/              # Custom hooks
+│   │   └── styles/             # Estilos globais
+│   └── modules/                # Módulos da aplicação
+│       └── home/               # Módulo da página inicial
+│           ├── components/
+│           ├── pages/
+│           └── index.ts
+├── package.json
+├── vite.config.ts
+├── tsconfig.json
+└── README.md
 ```
 
-### Como adicionar um novo módulo (ferramenta)
-1. Crie uma pasta em `src/modules/NOME_DO_MODULO/`.
-2. Siga a estrutura interna de pages, components, services, etc.
-3. Importe as páginas/rotas do módulo em `src/routes/`.
-4. Utilize componentes e hooks do core sempre que possível.
-5. Documente o módulo com README e comentários claros.
+## 🎨 Design System
 
-### Build e Deploy com Docker
+### Cores
+- **Background**: Dark theme com glassmorphism
+- **Accent**: Azul moderno (#3b82f6)
+- **Status**: Verde (sucesso), Amarelo (desenvolvimento), Cinza (planejado)
 
-Para buildar e rodar o frontend em ambiente Docker:
+### Componentes
+- **Glassmorphism**: Efeitos de vidro com blur
+- **Micro-animações**: Transições suaves
+- **Cards modulares**: Sistema de grade responsivo
+- **Gradientes**: Cores vibrantes para ícones
 
-1. Certifique-se de que o `Dockerfile` está presente em `frontend/`.
-2. Execute:
-   ```bash
-   docker build -t pcp-frontend .
-   docker run -p 3000:80 pcp-frontend
-   ```
-3. O frontend estará disponível em `http://localhost:3000` (ou porta configurada).
+## 🛠️ Instalação e Execução
 
-### Padrões e Boas Práticas
-- Design system centralizado em `core/components/`
-- Autenticação e permissões em `core/services/`
-- Rotas centralizadas em `src/routes/`
-- Documentação incremental e exemplos de uso
+### Pré-requisitos
+- Node.js 18+
+- npm ou yarn
+
+### Instalação
+```bash
+# Clone o repositório
+git clone [url-do-repo]
+
+# Entre no diretório
+cd plataforma-pcp-frontend
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+```
+
+### Scripts Disponíveis
+```bash
+npm run dev          # Inicia o servidor de desenvolvimento
+npm run build        # Build para produção
+npm run preview      # Preview do build
+npm run lint         # Verifica o código
+npm run lint:fix     # Corrige problemas de lint
+npm run type-check   # Verifica tipos TypeScript
+npm run format       # Formata o código
+```
+
+## 📱 Módulos Disponíveis
+
+### ✅ Disponível
+- **Análise de Produção**: Monitore OEE, disponibilidade e performance
+
+### 🚧 Em Desenvolvimento
+- **Manutenção**: Gestão de manutenção preventiva e preditiva
+- **Integrações**: APIs para ERP, MES, SCADA
+
+### 📋 Planejado
+- **Estoque**: Controle inteligente com rastreabilidade
+- **Qualidade**: Sistema de gestão da qualidade
+- **Analytics & BI**: Dashboards avançados e IA
+
+## 🔧 Configuração de Desenvolvimento
+
+### Path Mapping
+O projeto utiliza path mapping para imports limpos:
+```typescript
+import { Button } from '@/shared/components/ui';
+import { HomePage } from '@/modules/home';
+import { THEME } from '@/core/config/theme';
+```
+
+### CSS Modules
+Cada componente possui seu próprio arquivo de estilos:
+```typescript
+import styles from './Component.module.css';
+```
+
+### Hooks Personalizados
+- `useNotification`: Sistema de notificações
+- `useScroll`: Controle de scroll
+- `useIntersectionObserver`: Animações baseadas em scroll
+
+## 🎯 Próximos Passos
+
+1. **Implementar módulos específicos**
+2. **Adicionar autenticação**
+3. **Integrar com APIs backend**
+4. **Implementar testes automatizados**
+5. **Configurar CI/CD**
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## 👥 Equipe
+
+Desenvolvido com foco em excelência operacional pela equipe PlataformaPCP.
 
 ---
 
-*Documentação atualizada automaticamente pelo assistente em 24/07/2025*
+**PlataformaPCP** - Transformando a indústria através da tecnologia 🏭✨

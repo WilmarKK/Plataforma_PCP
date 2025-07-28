@@ -11,8 +11,9 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.api.routes import machine_router, example_router
 from app.core.database import get_db
+from app.modules.production_analyzer.api.routes.machine import router as machine_router
+from app.modules.production_analyzer.api.routes.example import router as example_router
 
 # Instância principal da aplicação FastAPI
 def create_app() -> FastAPI:
@@ -38,9 +39,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Rotas principais serão incluídas aqui
-    app.include_router(machine_router)
-    app.include_router(example_router)
+    # Incluindo rotas dos módulos
+    app.include_router(machine_router, prefix="/production-analyzer")
+    app.include_router(example_router, prefix="/production-analyzer")
 
     return app
 

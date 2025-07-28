@@ -1,0 +1,177 @@
+/* ModulesGrid Component Styles */
+
+.modulesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-2xl);
+    margin-bottom: var(--space-5xl);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all var(--duration-slow) var(--ease-out);
+  }
+  
+  .modulesGrid.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .moduleCard {
+    padding: var(--space-2xl);
+    transition: all var(--duration-normal) var(--ease-out);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp var(--duration-slow) var(--ease-out) forwards;
+  }
+  
+  .moduleCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform var(--duration-normal) var(--ease-out);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+  
+  .moduleCard:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .moduleCard:hover {
+    transform: translateY(-4px);
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
+  }
+  
+  .moduleCard.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    animation: pulse 2s infinite;
+  }
+  
+  .moduleIcon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--duration-normal) var(--ease-bounce);
+  }
+  
+  .moduleCard:hover .moduleIcon {
+    transform: scale(1.05) rotate(5deg);
+  }
+  
+  .moduleTitle {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-md);
+    color: var(--text-primary);
+    line-height: var(--leading-tight);
+  }
+  
+  .moduleDescription {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+    line-height: var(--leading-relaxed);
+    font-size: var(--text-base);
+  }
+  
+  .moduleStatus {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    width: fit-content;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+  
+  .statusAvailable {
+    background: var(--success-light);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  
+  .statusDevelopment {
+    background: var(--warning-light);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  
+  .statusPlanned {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-muted);
+    border: 1px solid rgba(107, 114, 128, 0.2);
+  }
+  
+  .moduleCard:hover .moduleStatus {
+    transform: scale(1.02);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .modulesGrid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-4xl);
+    }
+  
+    .moduleCard {
+      padding: var(--space-xl);
+    }
+  
+    .moduleIcon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: var(--space-lg);
+    }
+  
+    .moduleTitle {
+      font-size: var(--text-lg);
+      margin-bottom: var(--space-sm);
+    }
+  
+    .moduleDescription {
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-lg);
+    }
+  }
+  
+  /* Animation Keyframes */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { 
+      opacity: 0.6; 
+    }
+    50% { 
+      opacity: 0.3; 
+    }
+  }

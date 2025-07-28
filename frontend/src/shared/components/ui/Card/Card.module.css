@@ -1,0 +1,61 @@
+.card {
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Variants */
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+  
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+  }
+  
+  .solid {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  
+  /* Interactive */
+  .clickable {
+    cursor: pointer;
+  }
+  
+  .hover:hover {
+    transform: translateY(-4px);
+    background: var(--bg-hover);
+    border-color: var(--accent);
+  }
+  
+  .hover:hover::before {
+    transform: scaleX(1);
+  }
+  
+  /* Mobile */
+  @media (max-width: 768px) {
+    .card {
+      padding: 1.5rem;
+    }
+  }
