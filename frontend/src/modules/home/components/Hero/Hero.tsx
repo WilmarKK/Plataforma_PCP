@@ -1,12 +1,26 @@
 import React from 'react'
 import { Button } from '@/shared/components/ui'
-import { smoothScrollTo } from '@/core/utils/helpers'
 import { APP_CONFIG } from '@/core/config/constants'
 import styles from './Hero.module.css'
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+  onExploreModules?: () => void
+}
+
+export const Hero: React.FC<HeroProps> = ({ onExploreModules }) => {
   const handleScrollToModules = () => {
-    smoothScrollTo('modules')
+    if (onExploreModules) {
+      onExploreModules()
+    } else {
+      // Fallback caso não tenha a prop
+      const modulesSection = document.getElementById('modules')
+      if (modulesSection) {
+        modulesSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        })
+      }
+    }
   }
 
   return (

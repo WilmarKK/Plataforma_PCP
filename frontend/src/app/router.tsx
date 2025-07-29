@@ -1,12 +1,20 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { Layout } from '@/shared/components/layout';
-import { HomePage } from '@/modules/home';
+import { HomePage } from '@/modules/home/pages/HomePage';
+
+const LayoutWithOutlet: React.FC = () => {
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+};
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: <LayoutWithOutlet />,
     children: [
       {
         index: true,

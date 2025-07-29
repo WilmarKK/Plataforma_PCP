@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { ModuleCard } from './ModuleCard';
-import { MODULE_DATA } from '@/core/config/constants';
-import { useIntersectionObserver } from '@/shared/hooks/useIntersectionObserver';
+import { MODULE_DATA } from '@/core/types/modules';
 import { createStaggerAnimation } from '@/core/utils/animations';
 import styles from './ModulesGrid.module.css';
 
@@ -9,15 +8,32 @@ export const ModulesGrid: React.FC = () => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
 
-  useIntersectionObserver(
-    gridRef,
-    (entry) => {
-      if (entry.isIntersecting && !isVisible) {
-        setIsVisible(true);
+  // Implementação nativa do IntersectionObserver
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
       }
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-  );
+    );
+
+    if (gridRef.current) {
+      observer.observe(gridRef.current);
+    }
+
+    return () => {
+      if (gridRef.current) {
+        observer.unobserve(gridRef.current);
+      }
+    };
+  }, [isVisible]);
 
   useEffect(() => {
     if (isVisible && gridRef.current) {

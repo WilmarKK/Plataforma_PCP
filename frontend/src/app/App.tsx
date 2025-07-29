@@ -1,8 +1,7 @@
-
 import React, { useEffect } from 'react'
-import { Layout } from '@/shared/components/layout'
-import { HomePage } from '@/modules/home'
+import { AppRouter } from './router'
 import { usePerformance } from '@/core/utils/performance'
+import '@/shared/styles/globals.css'      // ← ADICIONAR ESTA LINHA
 import '@/shared/styles/animations.css'
 
 const App: React.FC = () => {
@@ -12,11 +11,7 @@ const App: React.FC = () => {
     logLoadTime('PlataformaPCP')
   }, [logLoadTime])
 
-  return (
-    <Layout>
-      <HomePage />
-    </Layout>
-  )
+  return <AppRouter />
 }
 
 export default App

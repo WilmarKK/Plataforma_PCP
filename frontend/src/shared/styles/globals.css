@@ -1,3 +1,7 @@
+@import './variables.css';
+
+/* resto do seu código atual... */
+
 * {
     margin: 0;
     padding: 0;

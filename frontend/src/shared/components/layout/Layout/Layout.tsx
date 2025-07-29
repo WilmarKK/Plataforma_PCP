@@ -32,12 +32,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.bgGradient} />
-      <Header />
-      <main className={styles.main}>
-        {children}
-      </main>
-      <Footer />
-    </div>
+  <div className="bg-gradient" />  {/* ← Classe global */}
+  <Header />
+  <main className={styles.main}>
+    {children}
+  </main>
+  <Footer />
+</div>
   )
 }

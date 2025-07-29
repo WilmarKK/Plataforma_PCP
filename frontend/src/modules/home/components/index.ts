@@ -1,2 +1,2 @@
-export { Hero } from './Hero';
+export { Hero } from './Hero/Hero';
 export { ModulesGrid, ModuleCard } from './ModulesGrid';
