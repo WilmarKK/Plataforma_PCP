@@ -1,0 +1,21 @@
+.ssoButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ssoButton {
+  flex: 1;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.ssoButton:hover {
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .ssoButtons {
+    flex-direction: column;
+  }
+}

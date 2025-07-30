@@ -363,15 +363,13 @@ git push origin feature/nova-funcionalidade
 ## 📄 Informações do Projeto
 
 ### 👥 Equipe
-Desenvolvido pela equipe **PlataformaPCP** com foco em excelência operacional e inovação tecnológica.
+Desenvolvido por Wilmar Izequiel Kleinschmidt
 
 ### 📧 Contato
-- **Email**: dev@plataformapcp.com
-- **Website**: https://plataformapcp.com
+- **Email**: kogakleinscleins@gmail.com
+- **Website**:
 - **Issues**: [GitHub Issues](https://github.com/seu-usuario/plataforma-pcp-frontend/issues)
 
-### 📜 Licença
-Este projeto está sob a licença **MIT**. Consulte o arquivo `LICENSE` para mais detalhes.
 
 ### 🏆 Qualidade
 - ✅ TypeScript para segurança de tipos

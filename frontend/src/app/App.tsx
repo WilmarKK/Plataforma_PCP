@@ -1,17 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { AuthProvider } from '@/shared/hooks/useAuth'
 import { AppRouter } from './router'
-import { usePerformance } from '@/core/utils/performance'
-import '@/shared/styles/globals.css'      // ← ADICIONAR ESTA LINHA
-import '@/shared/styles/animations.css'
+import '@/shared/styles/globals.css'
 
 const App: React.FC = () => {
-  const { logLoadTime } = usePerformance()
-
-  useEffect(() => {
-    logLoadTime('PlataformaPCP')
-  }, [logLoadTime])
-
-  return <AppRouter />
+  return (
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
+  )
 }
 
 export default App

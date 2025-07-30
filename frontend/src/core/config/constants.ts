@@ -7,6 +7,8 @@ export const APP_CONFIG = {
 
 export const ROUTES = {
   HOME: '/',
+  LOGIN: '/login',
+  DASHBOARD: '/dashboard', // 🆕 NOVO
   PRODUCTION_ANALYZER: '/modules/production-analyzer',
   MAINTENANCE: '/modules/maintenance',
   INVENTORY: '/modules/inventory',
