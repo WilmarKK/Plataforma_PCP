@@ -14,6 +14,7 @@ from sqlalchemy import text
 from app.core.database import get_db
 from app.modules.production_analyzer.api.routes.machine import router as machine_router
 from app.modules.production_analyzer.api.routes.example import router as example_router
+from app.api.routes.auth import router as auth_router
 
 # Instância principal da aplicação FastAPI
 def create_app() -> FastAPI:
@@ -40,6 +41,7 @@ def create_app() -> FastAPI:
     )
 
     # Incluindo rotas dos módulos
+    app.include_router(auth_router, prefix="/auth", tags=["authentication"])
     app.include_router(machine_router, prefix="/production-analyzer")
     app.include_router(example_router, prefix="/production-analyzer")
 
