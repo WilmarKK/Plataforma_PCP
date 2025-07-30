@@ -3,16 +3,37 @@
   "version": "1.0.0",
   "description": "Plataforma modular para gestão industrial inteligente",
   "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
-    "dev": "vite --port 5173 --force",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "dev": "vite --port 5173 --open",
+    "build": "npm run type-check && vite build",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
+    "preview": "vite preview --port 4173",
+    "serve": "npm run build && npm run preview",
+    
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint:staged": "lint-staged",
+    
     "type-check": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,md,json}\"",
-    "prepare": "husky install"
+    "type-check:watch": "tsc --noEmit --watch",
+    
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md,json}\" \"*.{js,ts,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,css,md,json}\" \"*.{js,ts,json,md}\"",
+    
+    "clean": "rimraf dist node_modules/.vite",
+    "clean:all": "rimraf dist node_modules",
+    "reinstall": "npm run clean:all && npm install",
+    
+    "test": "echo \"Testes não configurados ainda\" && exit 0",
+    "test:coverage": "echo \"Coverage não configurado ainda\" && exit 0",
+    
+    "prepare": "husky install",
+    "postinstall": "npm run prepare"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -34,6 +55,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.3",
+    "rimraf": "^5.0.0",
     "typescript": "^5.8.3",
     "vite": "^5.3.4"
   },
@@ -46,6 +68,18 @@
       "prettier --write"
     ]
   },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "keywords": [
     "react",
     "typescript",
@@ -54,8 +88,29 @@
     "manufacturing",
     "pcp",
     "production-control",
-    "dashboard"
+    "dashboard",
+    "frontend",
+    "enterprise"
   ],
-  "author": "PlataformaPCP Team",
+  "author": {
+    "name": "PlataformaPCP Team",
+    "email": "dev@plataformapcp.com",
+    "url": "https://plataformapcp.com"
+  },
+  "contributors": [
+    {
+      "name": "Seu Nome",
+      "email": "seu.email@exemplo.com",
+      "role": "Lead Developer"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seu-usuario/plataforma-pcp-frontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/plataforma-pcp-frontend/issues"
+  },
+  "homepage": "https://github.com/seu-usuario/plataforma-pcp-frontend#readme",
   "license": "MIT"
 }

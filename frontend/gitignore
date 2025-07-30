@@ -1,4 +1,11 @@
-# Logs
+# =========================================================
+# GITIGNORE - PLATAFORMAPCP FRONTEND
+# =========================================================
+# Define quais arquivos e diretórios devem ser ignorados
+# pelo controle de versão Git
+# =========================================================
+
+# === LOGS E ARQUIVOS DE DEBUG ===
 logs
 *.log
 npm-debug.log*
@@ -7,95 +14,145 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Dependencies
-node_modules
-dist
-dist-ssr
-*.local
+# === DEPENDÊNCIAS ===
+node_modules/                        # Dependências NPM/Yarn
+jspm_packages/                       # Dependências JSPM
+.pnp.*                              # Yarn PnP
 
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# === BUILDS E DISTRIBUIÇÃO ===
+dist/                               # Build de produção Vite
+dist-ssr/                           # Build SSR
+build/                              # Build alternativo
+out/                                # Build Next.js
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# === ARQUIVOS TEMPORÁRIOS ===
+*.local                             # Arquivos locais do Vite
+.tmp/                               # Diretório temporário
+tmp/                                # Diretório temporário alternativo
+temp/                               # Arquivos temporários
 
-# Build outputs
-build
-dist
-out
+# === VARIÁVEIS DE AMBIENTE ===
+.env                                # Variáveis de desenvolvimento
+.env.local                          # Variáveis locais
+.env.development.local              # Desenvolvimento local
+.env.test.local                     # Teste local
+.env.production.local               # Produção local
+.env.staging                        # Ambiente de staging
 
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
+# === EDITORES E IDEs ===
+.vscode/*                           # VS Code (mantém só extensions.json)
+!.vscode/extensions.json            # Extensões recomendadas do VS Code
+.idea/                              # IntelliJ IDEA
+.DS_Store                           # macOS Finder
+*.suo                               # Visual Studio
+*.ntvs*                             # Node.js Tools for Visual Studio
+*.njsproj                           # Node.js project file
+*.sln                               # Visual Studio solution
+*.sw?                               # Vim swap files
+.vimrc                              # Vim config
 
-# nyc test coverage
-.nyc_output
+# === CACHE E OTIMIZAÇÃO ===
+.cache/                             # Cache geral
+.parcel-cache/                      # Cache do Parcel
+.rpt2_cache/                        # Rollup TypeScript cache
+.rts2_cache_cjs/                    # Rollup cache CommonJS
+.rts2_cache_es/                     # Rollup cache ES modules
+.rts2_cache_umd/                    # Rollup cache UMD
+*.tsbuildinfo                       # TypeScript build info
+.eslintcache                        # Cache do ESLint
+.stylelintcache                     # Cache do Stylelint
 
-# Dependency directories
-jspm_packages/
+# === TESTES E COBERTURA ===
+coverage/                           # Relatórios de cobertura
+*.lcov                              # Arquivos de cobertura LCOV
+.nyc_output/                        # NYC test coverage
+junit.xml                           # Relatórios JUnit
+test-results/                       # Resultados de testes
 
-# TypeScript cache
-*.tsbuildinfo
+# === PACKAGE MANAGERS ===
+.npm/                               # Cache do NPM
+.yarn-integrity                     # Integrity file do Yarn
+.pnpm-store/                        # Store do PNPM
+package-lock.json                   # Lock file NPM (se usar Yarn)
+yarn.lock                          # Lock file Yarn (se usar NPM)
 
-# Optional npm cache directory
-.npm
+# === RUNTIME DATA ===
+pids                                # Process IDs
+*.pid                               # Process ID files
+*.seed                              # Random seed files
+*.pid.lock                          # PID lock files
+.node_repl_history                  # Node.js REPL history
 
-# Optional eslint cache
-.eslintcache
+# === BUNDLERS ESPECÍFICOS ===
+# Webpack
+.webpack/
+webpack-stats.json
 
-# Optional stylelint cache
-.stylelintcache
+# Rollup
+rollup-stats.json
 
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+# Vite
+.vite/                              # Cache do Vite
+vite.config.*.timestamp-*           # Timestamps do Vite
 
-# Optional REPL history
-.node_repl_history
+# === FERRAMENTAS DE BUILD ===
+# Storybook
+.storybook-out/
+storybook-static/
 
-# Output of 'npm pack'
-*.tgz
+# Next.js
+.next/
+next-env.d.ts
 
-# Yarn Integrity file
-.yarn-integrity
+# Nuxt.js
+.nuxt/
+.nitro/
+.output/
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
+# Gatsby
+.gatsby/
+public/
 
-# Next.js build output
-.next
+# === ANÁLISE E PROFILING ===
+bundle-analyzer-report.html         # Relatório do bundle analyzer
+webpack-bundle-analyzer-report.html # Relatório Webpack
+speed-measure-plugin.json           # Speed measure plugin
 
-# Nuxt.js build / generate output
-.nuxt
+# === DEPLOYMENT ===
+.vercel/                            # Vercel deployment
+.netlify/                           # Netlify deployment
+.firebase/                          # Firebase deployment
+.surge/                             # Surge deployment
 
-# Storybook build outputs
-.out
-.storybook-out
+# === GIT HOOKS E HUSKY ===
+.husky/_                            # Husky git hooks (gerado)
 
-# Temporary folders
-tmp/
-temp/
+# === ARQUIVOS DE SISTEMA ===
+Thumbs.db                           # Windows thumbnail cache
+ehthumbs.db                         # Windows thumbnail cache
+Desktop.ini                         # Windows desktop config
+.Spotlight-V100                     # macOS Spotlight
+.Trashes                            # macOS Trash
+.__MACOSX                           # macOS resource forks
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# === CERTIFICADOS E CHAVES ===
+*.pem                               # Certificados
+*.key                               # Chaves privadas
+*.crt                               # Certificados
+*.p12                               # Certificados PKCS#12
 
-# Husky
-.husky/_
+# === BACKUP E RECOVERY ===
+*.backup                            # Arquivos de backup
+*.bak                               # Arquivos de backup
+*.swp                               # Swap files
+*~                                  # Backup files
+
+# === DOCUMENTAÇÃO GERADA ===
+docs/build/                         # Documentação buildada
+.docusaurus/                        # Docusaurus
+
+# === ARQUIVOS ESPECÍFICOS DO PROJETO ===
+# Adicione aqui arquivos específicos que devem ser ignorados
+# Exemplo:
+# /config/secrets.json
+# /src/assets/temp/

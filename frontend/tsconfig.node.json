@@ -1,13 +1,36 @@
 {
+  "//": "Configuração TypeScript específica para scripts Node.js (Vite, etc.)",
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    /* === CONFIGURAÇÕES PARA NODE.JS === */
+    "composite": true,                           // Habilita project references
+    "skipLibCheck": true,                        // Pula verificação de tipos em node_modules
+    "module": "ESNext",                          // Sistema de módulos moderno
+    "moduleResolution": "bundler",               // Resolução otimizada para bundlers
+    "allowSyntheticDefaultImports": true,        // Permite imports default sintéticos
+    "strict": true,                              // Verificações rigorosas habilitadas
+    
+    /* === CONFIGURAÇÕES ESPECÍFICAS === */
+    "target": "ES2022",                          // Target mais moderno para Node.js
+    "lib": ["ES2022"],                           // Bibliotecas do ES2022
+    "types": ["node"],                           // Tipos do Node.js disponíveis
+    "esModuleInterop": true,                     // Interoperabilidade ES/CommonJS
+    "forceConsistentCasingInFileNames": true,    // Consistência em nomes de arquivos
+    "isolatedModules": true,                     // Módulos isolados
+    "noEmit": true                               // Não emite arquivos compilados
   },
+  
+  /* === ARQUIVOS INCLUÍDOS === */
   "include": [
-    "vite.config.ts"
+    "vite.config.ts",                            // Configuração do Vite
+    "eslint.config.js",                          // Configuração do ESLint
+    "*.config.ts",                               // Outros arquivos de configuração
+    "*.config.js"                                // Configurações JavaScript
+  ],
+  
+  /* === ARQUIVOS EXCLUÍDOS === */
+  "exclude": [
+    "src",                                       // Código fonte da aplicação
+    "dist",                                      // Build de produção
+    "node_modules"                               // Dependências
   ]
 }
