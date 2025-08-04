@@ -6,6 +6,7 @@ import styles from './LoginPage.module.css'
 export const LoginPage: React.FC = () => {
   return (
     <div className={styles.container}>
+      {/* ESTA LINHA ESTAVA FALTANDO! */}
       <div className={styles.background} />
       
       <div className={styles.loginContainer}>

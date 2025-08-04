@@ -1,6 +1,5 @@
 @import './variables.css';
-
-/* resto do seu código atual... */
+@import './animations.css';
 
 * {
     margin: 0;
@@ -9,22 +8,42 @@
   }
   
   :root {
+    /* Cores de fundo */
     --bg-primary: #0a0a0b;
     --bg-secondary: #1a1a1d;
     --bg-card: rgba(255, 255, 255, 0.03);
     --bg-hover: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 255, 255, 0.1);
+    --border-primary: rgba(255, 255, 255, 0.1); /* Adicionado para LoginPage */
+    
+    /* Cores de texto */
     --text-primary: #ffffff;
     --text-secondary: #a1a1aa;
     --text-muted: #71717a;
+    
+    /* Cores de destaque */
     --accent: #3b82f6;
     --accent-hover: #2563eb;
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
+    
+    /* Gradientes */
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-text: linear-gradient(to right, #4facfe, #f093fb); /* Adicionado para LoginPage */
+    
+    /* Efeitos glass/vidro - NOVOS para LoginPage */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-blur: 16px;
+    --glass-border: rgba(255, 255, 255, 0.15);
+    
+    /* Bordas arredondadas - NOVO para LoginPage */
+    --radius-xl: 16px;
+    
+    /* Transições - NOVO para LoginPage */
+    --transition-fast: 0.2s ease-in-out;
   }
   
   body {
@@ -53,7 +72,7 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
   }
   
-  /* Animated Background */
+  /* Animated Background - CORRIGIDO */
   .bg-gradient {
     position: fixed;
     top: 0;
@@ -65,6 +84,7 @@
                 radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
     animation: gradientShift 20s ease infinite;
     z-index: -1;
+    pointer-events: none; /* Permite cliques através do background */
   }
   
   /* Scrollbar Styling */

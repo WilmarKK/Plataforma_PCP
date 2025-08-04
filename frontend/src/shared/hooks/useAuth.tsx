@@ -47,21 +47,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const parsedUser = JSON.parse(userData)
           setIsAuthenticated(true)
           setUser(parsedUser)
+        } else {
+          // Garantir que está explicitamente não autenticado
+          setIsAuthenticated(false)
+          setUser(null)
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error)
         localStorage.removeItem('auth_token')
         localStorage.removeItem('user_data')
+        setIsAuthenticated(false)
+        setUser(null)
       } finally {
+        // IMPORTANTE: Só seta isLoading como false depois de tudo
         setIsLoading(false)
       }
     }
 
-    checkAuth()
+    // Usar setTimeout para garantir que a verificação aconteça no próximo tick
+    const timeoutId = setTimeout(checkAuth, 0)
+    
+    return () => clearTimeout(timeoutId)
   }, [])
 
   const login = async (email: string, password: string): Promise<void> => {
     try {
+      setIsLoading(true) // Mostrar loading durante login
+      
       // Simular chamada API
       await new Promise(resolve => setTimeout(resolve, 1500))
       
@@ -83,6 +95,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (error) {
       throw error
+    } finally {
+      setIsLoading(false)
     }
   }
 

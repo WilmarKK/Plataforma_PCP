@@ -106,14 +106,17 @@ export const LoginForm: React.FC = () => {
           </a>
         </div>
 
-        {/* BOTÃO SIMPLIFICADO - SEM PROPS COMPLEXAS */}
-        <button
+        {/* CORREÇÃO: Usando o componente Button ao invés de button HTML */}
+        <Button
           type="submit"
-          className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
+          variant="primary"
+          size="lg"
+          loading={isLoading}
           disabled={isLoading}
+          className={styles.submitButton}
         >
-          {isLoading ? 'Entrando...' : 'Entrar na Plataforma'}
-        </button>
+          Entrar na Plataforma
+        </Button>
       </form>
     </div>
   )

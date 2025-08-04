@@ -1,4 +1,4 @@
-form {
+.form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -6,7 +6,7 @@ form {
 
 .formGroup {
   position: relative;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-fast);
 }
 
 .formGroup:focus-within {
@@ -15,29 +15,30 @@ form {
 
 .formLabel {
   display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-sm);
 }
 
 .formInput {
   width: 100%;
-  padding: 1rem 1.25rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--glass-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
   color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
   backdrop-filter: blur(10px);
 }
 
 .formInput:focus {
   outline: none;
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg-strong);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
 }
 
 .formInput::placeholder {
@@ -54,7 +55,7 @@ form {
 .checkboxGroup {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .checkbox {
@@ -64,16 +65,17 @@ form {
 }
 
 .checkboxLabel {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   cursor: pointer;
+  user-select: none;
 }
 
 .forgotLink {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--accent);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-fast);
 }
 
 .forgotLink:hover {
@@ -81,9 +83,10 @@ form {
 }
 
 .submitButton {
-  margin-top: 0.5rem;
+  margin-top: var(--space-sm);
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
 .submitButton::before {
@@ -97,9 +100,18 @@ form {
     transparent, 
     rgba(255, 255, 255, 0.2), 
     transparent);
-  transition: left 0.5s ease;
+  transition: left var(--transition-slow);
 }
 
 .submitButton:hover::before {
   left: 100%;
+}
+
+/* Loading state específico para o submit button */
+.submitButton.loading {
+  pointer-events: none;
+}
+
+.submitButton.loading::before {
+  display: none;
 }

@@ -1,7 +1,5 @@
 # Backend - PlataformaPCP (Arquitetura Modular)
 
-Este diretório contém toda a estrutura do backend da PlataformaPCP, agora organizada de forma modular e escalável, seguindo padrões internacionais.
-
 ## Estrutura de Pastas
 
 ```

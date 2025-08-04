@@ -15,6 +15,7 @@ export interface ButtonProps {
   disabled?: boolean
   loading?: boolean
   className?: string
+  type?: 'button' | 'submit' | 'reset' // ADICIONEI ESTA LINHA
 }
 
 export interface CardProps {
