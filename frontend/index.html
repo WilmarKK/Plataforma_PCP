@@ -1,28 +1,49 @@
+<!-- Define o tipo de documento como HTML5 -->
 <!DOCTYPE html>
+
+<!-- Início do documento HTML com idioma definido para português do Brasil -->
 <html lang="pt-BR">
   <head>
+    <!-- Define a codificação de caracteres como UTF-8 (aceita acentos, símbolos, etc.) -->
     <meta charset="UTF-8" />
+
+    <!-- Ícone da aba do navegador (favicon) -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Define que a página deve se adaptar ao tamanho da tela (responsividade) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Descrição do site para motores de busca (SEO) -->
     <meta name="description" content="Plataforma modular para gestão industrial inteligente" />
+
+    <!-- Palavras-chave para busca (SEO) -->
     <meta name="keywords" content="PCP, produção, manutenção, estoque, qualidade, industrial" />
+
+    <!-- Nome do autor do site -->
     <meta name="author" content="PlataformaPCP Team" />
-    
-    <!-- Open Graph Meta Tags -->
+
+    <!-- Informações para redes sociais (Open Graph) -->
     <meta property="og:title" content="PlataformaPCP - Gestão Industrial Inteligente" />
     <meta property="og:description" content="Plataforma modular completa para análise de produção, manutenção, estoque e qualidade" />
     <meta property="og:type" content="website" />
-    
-    <!-- Preconnect for performance -->
+
+    <!-- Faz conexão antecipada com o CDN (ajuda a carregar recursos mais rápido) -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-    
-    <!-- Theme color for mobile browsers -->
+
+    <!-- Cor da barra do navegador em dispositivos móveis -->
     <meta name="theme-color" content="#0a0a0b" />
-    
+
+    <!-- Título da aba do navegador -->
     <title>PlataformaPCP - Gestão Industrial Inteligente</title>
   </head>
+
   <body>
+    <!-- Div principal onde o React vai montar toda a aplicação -->
     <div id="root"></div>
+
+    <!-- Importa o código principal da aplicação (React + TypeScript), que começa em src/index.tsx -->
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
+<!-- Fim do documento HTML -->
+<!-- Este é o arquivo HTML principal que carrega a aplicação React. -->
