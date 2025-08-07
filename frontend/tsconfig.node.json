@@ -15,8 +15,7 @@
     "types": ["node"],                           // Tipos do Node.js disponíveis
     "esModuleInterop": true,                     // Interoperabilidade ES/CommonJS
     "forceConsistentCasingInFileNames": true,    // Consistência em nomes de arquivos
-    "isolatedModules": true,                     // Módulos isolados
-    "noEmit": true                               // Não emite arquivos compilados
+    "isolatedModules": true                      // Módulos isolados
   },
   
   /* === ARQUIVOS INCLUÍDOS === */

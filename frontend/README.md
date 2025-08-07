@@ -1,349 +1,292 @@
-# PlataformaPCP - Frontend
+# 🚀 Frontend - PlataformaPCP
 
-## 🏭 Gestão Industrial Inteligente
+## 📋 Visão Geral
 
-Plataforma modular completa para análise de produção, manutenção, estoque e qualidade. Transforme dados em decisões estratégicas com uma interface moderna e intuitiva.
+O frontend da PlataformaPCP é uma aplicação moderna construída com React 18, TypeScript e Vite, seguindo as melhores práticas de desenvolvimento e design. A interface foi projetada para oferecer uma experiência de usuário intuitiva e responsiva, com foco na usabilidade e performance.
 
-## 🚀 Tecnologias Utilizadas
-
-- **React 18** - Framework principal para construção da interface
-- **TypeScript** - Tipagem estática para maior segurança e produtividade
-- **Vite** - Build tool ultrarrápido para desenvolvimento e produção
-- **React Router DOM** - Sistema de roteamento para SPAs
-- **Lucide React** - Biblioteca de ícones moderna e consistente
-- **CSS Modules** - Estilos organizados e isolados por componente
-- **ESLint + Prettier** - Padronização e formatação de código
-- **Husky + Lint-staged** - Git hooks para qualidade de código
-
-## 🌳 Estrutura Detalhada do Projeto
+## 🏗️ Estrutura de Projeto
 
 ```
-PlataformaPCP/
-├── .husky/                     # Git hooks para qualidade de código
-│   └── _/
-│       └── husky.sh
-├── public/                     # Arquivos estáticos públicos
-│   ├── favicon.svg
-│   └── vite.svg
-├── src/                        # Código fonte da aplicação
-│   ├── app/                    # Configuração principal da aplicação
-│   │   ├── App.tsx             # Componente raiz da aplicação
-│   │   ├── index.ts            # Barrel export do módulo app
-│   │   ├── README.md           # Documentação do módulo app
-│   │   └── router.tsx          # Configuração das rotas
-│   │
-│   ├── core/                   # Configurações e utilitários centrais
-│   │   ├── config/             # Arquivos de configuração
-│   │   │   ├── constants.ts    # Constantes globais da aplicação
-│   │   │   └── theme.ts        # 🎨 Configurações de tema e cores
-│   │   ├── types/              # Tipos TypeScript globais
-│   │   │   ├── common.ts       # Tipos comuns reutilizáveis
-│   │   │   └── modules.ts      # Tipos específicos dos módulos
-│   │   ├── utils/              # Utilitários e helpers
-│   │   │   ├── animations.ts   # Funções para animações
-│   │   │   ├── helpers.ts      # Funções auxiliares gerais
-│   │   │   └── performance.ts  # Otimizações de performance
-│   │   └── README.md
-│   │
-│   ├── modules/                # Módulos específicos da aplicação
-│   │   ├── auth/               # 🔐 Módulo de autenticação
-│   │   │   ├── components/     # Componentes do auth (Login, etc.)
-│   │   │   ├── pages/          # Páginas de login/registro
-│   │   │   └── index.ts
-│   │   ├── home/               # 🏠 Módulo da página inicial
-│   │   │   ├── components/     # Componentes específicos do home
-│   │   │   ├── pages/          # Página principal do dashboard
-│   │   │   └── index.ts
-│   │   ├── index.ts            # Barrel export de todos os módulos
-│   │   └── README.md
-│   │
-│   ├── shared/                 # Recursos compartilhados
-│   │   ├── components/         # Componentes reutilizáveis
-│   │   │   ├── layout/         # Componentes de layout (Header, Footer)
-│   │   │   └── ui/             # 🧩 Componentes de UI básicos (Button, Card)
-│   │   ├── hooks/              # Custom hooks reutilizáveis
-│   │   │   ├── useAuth.tsx     # Hook para autenticação
-│   │   │   ├── useIntersectionObserver.ts # Hook para observação de elementos
-│   │   │   ├── useNotification.ts # Hook para notificações
-│   │   │   └── useScroll.ts    # Hook para controle de scroll
-│   │   ├── styles/             # 🎨 Estilos globais
-│   │   │   ├── animations.css  # Animações CSS reutilizáveis
-│   │   │   ├── globals.css     # ⭐ Estilos globais da aplicação
-│   │   │   └── variables.css   # ⭐ Variáveis CSS globais (cores, espaçamentos)
-│   │   └── README.md
-│   │
-│   ├── index.tsx               # Ponto de entrada da aplicação
-│   └── vite-env.d.ts          # Definições de tipos do Vite
+frontend/
+├── public/                      # Arquivos estáticos
+│   ├── favicon.ico
+│   └── assets/
+│       └── images/
 │
-├── .env                        # Variáveis de ambiente (development)
-├── eslint.config.js           # Configuração do ESLint (nova versão)
-├── eslintrc.cjs               # Configuração do ESLint (versão legacy)
-├── estrutura.txt              # Estrutura gerada automaticamente
-├── gitignore                  # Arquivos ignorados pelo Git
-├── index.html                 # ⭐ Template HTML principal
-├── package.json               # ⭐ Dependências e scripts do projeto
-├── package-lock.json          # Lock de dependências
-├── prettierrc                 # Configuração do Prettier
-├── README.md                  # Documentação do projeto
-├── tsconfig.json              # Configuração do TypeScript
-└── tsconfig.node.js           # Configuração TypeScript para Node.js
+├── src/
+│   ├── app/                     # Configuração da aplicação
+│   │   ├── providers/           # Providers de contexto
+│   │   │   ├── AuthProvider.tsx # Provedor de autenticação
+│   │   │   └── ThemeProvider.tsx# Provedor de tema
+│   │   ├── router.tsx           # Configuração de rotas
+│   │   └── App.tsx              # Componente principal
+│   │
+│   ├── core/                    # Funcionalidades essenciais
+│   │   ├── api/                 # Configuração de API
+│   │   │   ├── client.ts        # Cliente HTTP (axios)
+│   │   │   ├── endpoints.ts     # Endpoints da API
+│   │   │   └── interceptors.ts  # Interceptadores de requisições
+│   │   ├── auth/                # Autenticação
+│   │   │   ├── hooks/           # Hooks de autenticação
+│   │   │   └── utils/           # Utilitários de autenticação
+│   │   └── config/              # Configurações globais
+│   │       └── constants.ts     # Constantes da aplicação
+│   │
+│   ├── modules/                 # Módulos da aplicação
+│   │   ├── auth/                # Módulo de autenticação
+│   │   │   ├── components/      # Componentes específicos
+│   │   │   ├── pages/           # Páginas do módulo
+│   │   │   │   └── LoginPage.tsx# Página de login
+│   │   │   └── index.ts         # Exportações do módulo
+│   │   │
+│   │   ├── home/                # Módulo da página inicial
+│   │   │   ├── components/      # Componentes específicos
+│   │   │   ├── pages/           # Páginas do módulo
+│   │   │   │   └── HomePage.tsx # Página inicial
+│   │   │   └── index.ts         # Exportações do módulo
+│   │   │
+│   │   ├── production-analyzer/ # Módulo de análise de produção
+│   │   │   ├── components/      # Componentes específicos
+│   │   │   ├── hooks/           # Hooks específicos
+│   │   │   ├── pages/           # Páginas do módulo
+│   │   │   ├── types/           # Tipos específicos
+│   │   │   └── index.ts         # Exportações do módulo
+│   │   │
+│   │   └── maintenance/         # Módulo de manutenção
+│   │       ├── components/      # Componentes específicos
+│   │       ├── pages/           # Páginas do módulo
+│   │       └── index.ts         # Exportações do módulo
+│   │
+│   ├── shared/                  # Recursos compartilhados
+│   │   ├── components/          # Componentes reutilizáveis
+│   │   │   ├── ui/              # Componentes de UI
+│   │   │   │   ├── Button/      # Componente de botão
+│   │   │   │   ├── Card/        # Componente de card
+│   │   │   │   ├── Input/       # Componente de input
+│   │   │   │   └── Modal/       # Componente de modal
+│   │   │   ├── layout/          # Componentes de layout
+│   │   │   │   ├── Header/      # Componente de cabeçalho
+│   │   │   │   ├── Sidebar/     # Componente de barra lateral
+│   │   │   │   └── Footer/      # Componente de rodapé
+│   │   │   └── data-display/    # Componentes de exibição de dados
+│   │   │       ├── Table/       # Componente de tabela
+│   │   │       ├── Chart/       # Componente de gráfico
+│   │   │       └── Dashboard/   # Componente de dashboard
+│   │   │
+│   │   ├── hooks/               # Hooks personalizados
+│   │   │   ├── useAuth.ts       # Hook de autenticação
+│   │   │   ├── useNotification.ts # Hook de notificação
+│   │   │   ├── useScroll.ts     # Hook de rolagem
+│   │   │   └── useIntersectionObserver.ts # Hook de observação
+│   │   │
+│   │   ├── styles/              # Estilos globais
+│   │   │   ├── globals.css      # Estilos globais
+│   │   │   ├── variables.css    # Variáveis CSS
+│   │   │   └── theme.ts         # Configuração de tema
+│   │   │
+│   │   ├── types/               # Tipos globais
+│   │   │   ├── api.ts           # Tipos de API
+│   │   │   ├── auth.ts          # Tipos de autenticação
+│   │   │   └── common.ts        # Tipos comuns
+│   │   │
+│   │   └── utils/               # Utilitários
+│   │       ├── date.ts          # Utilitários de data
+│   │       ├── format.ts        # Utilitários de formatação
+│   │       └── validation.ts    # Utilitários de validação
+│   │
+│   ├── index.tsx                # Ponto de entrada da aplicação
+│   └── vite-env.d.ts            # Declarações de tipos para Vite
+│
+├── .eslintrc.js                 # Configuração do ESLint
+├── .prettierrc                  # Configuração do Prettier
+├── tsconfig.json                # Configuração do TypeScript
+├── vite.config.ts               # Configuração do Vite
+├── package.json                 # Dependências e scripts
+└── README.md                    # Esta documentação
 ```
 
-## 📋 Arquivos Críticos para Estilização
+## 🎨 Design System
 
-### 🎯 **Prioridade Alta** (necessários para padronização)
-| Arquivo | Descrição | Funcionalidade |
-|---------|-----------|----------------|
-| **`src/shared/styles/globals.css`** | Estilos globais | Reset, tipografia, classes utilitárias |
-| **`src/shared/styles/variables.css`** | Variáveis CSS | Cores, espaçamentos, breakpoints |
-| **`src/core/config/theme.ts`** | Configuração de tema | Tokens de design, paleta de cores |
-| **`src/shared/components/ui/`** | Componentes UI | Button, Input, Card padronizados |
+### 🎭 Tema e Estilização
 
-### 🔧 **Configuração Base**
-| Arquivo | Descrição | Finalidade |
-|---------|-----------|------------|
-| `package.json` | Dependências do projeto | Framework CSS, bibliotecas de UI |
-| `index.html` | Template base | Meta tags, fontes, CDNs |
-| `src/modules/auth/pages/` | Página de login | Componente que precisa de ajuste |
+O design system da PlataformaPCP segue princípios modernos de UI/UX, com foco em:
 
-## 🎨 Design System Atual
+- **Glassmorphism**: Efeitos de vidro para elementos de UI
+- **Dark Theme**: Suporte nativo a tema escuro
+- **Responsividade**: Adaptação a diferentes tamanhos de tela
+- **Acessibilidade**: Conformidade com WCAG 2.1
 
-### 🌈 Paleta de Cores (configurável)
+### 🌈 Paleta de Cores
+
 ```css
-/* Cores principais */
---primary: #3b82f6;      /* Azul moderno */
---secondary: #1e293b;    /* Cinza escuro */
---accent: #06b6d4;       /* Ciano vibrante */
+:root {
+  /* Cores primárias */
+  --primary-50: #e6f7ff;
+  --primary-100: #bae7ff;
+  --primary-200: #91d5ff;
+  --primary-300: #69c0ff;
+  --primary-400: #40a9ff;
+  --primary-500: #1890ff; /* Cor principal */
+  --primary-600: #096dd9;
+  --primary-700: #0050b3;
+  --primary-800: #003a8c;
+  --primary-900: #002766;
 
-/* Status */
---success: #10b981;      /* Verde - recursos disponíveis */
---warning: #f59e0b;      /* Amarelo - em desenvolvimento */
---inactive: #6b7280;     /* Cinza - planejado */
+  /* Cores neutras */
+  --neutral-50: #fafafa;
+  --neutral-100: #f5f5f5;
+  --neutral-200: #e5e5e5;
+  --neutral-300: #d4d4d4;
+  --neutral-400: #a3a3a3;
+  --neutral-500: #737373;
+  --neutral-600: #525252;
+  --neutral-700: #404040;
+  --neutral-800: #262626;
+  --neutral-900: #171717;
 
-/* Backgrounds */
---bg-primary: #0a0a0b;   /* Fundo principal */
---bg-glass: rgba(255, 255, 255, 0.1); /* Glassmorphism */
+  /* Cores de feedback */
+  --success: #52c41a;
+  --warning: #faad14;
+  --error: #f5222d;
+  --info: #1890ff;
+}
 ```
 
-### ✨ Características Visuais
-- **Glassmorphism**: Efeitos de vidro com blur para modernidade
-- **Dark Theme**: Interface escura para reduzir fadiga visual
-- **CSS Modules**: Estilos isolados por componente
-- **Micro-animações**: Transições suaves e elegantes
+## 🚀 Scripts de Desenvolvimento
 
-## 🛠️ Scripts de Desenvolvimento
-
-### 🚀 Desenvolvimento
 ```bash
-npm run dev              # Servidor de desenvolvimento (porta 5173)
-npm run type-check       # Verificação de tipos TypeScript
-npm run type-check:watch # Verificação em modo watch
-```
-
-### 📦 Build e Deploy
-```bash
-npm run build           # Build otimizado para produção
-npm run build:analyze   # Build com análise de bundle
-npm run preview         # Preview do build de produção
-npm run serve           # Build + preview em um comando
-```
-
-### 🔍 Qualidade de Código
-```bash
-npm run lint            # Análise do código com ESLint
-npm run lint:fix        # Corrige problemas automaticamente
-npm run format          # Formata código com Prettier
-npm run format:check    # Verifica formatação sem alterar
-```
-
-### 🧹 Manutenção
-```bash
-npm run clean           # Remove dist e cache do Vite
-npm run clean:all       # Remove dist e node_modules
-npm run reinstall       # Limpa tudo e reinstala dependências
-```
-
-## 🚀 Instalação e Execução
-
-### 📋 Pré-requisitos
-- **Node.js** 18.0.0 ou superior
-- **NPM** 8.0.0 ou superior
-- **Git** para controle de versão
-
-### ⚡ Setup Rápido
-```bash
-# 1. Clone o repositório
-git clone [url-do-repositorio]
-cd PlataformaPCP
-
-# 2. Instale as dependências
+# Instalar dependências
 npm install
 
-# 3. Configure o ambiente
-cp .env.example .env  # Se existir
-
-# 4. Inicie o desenvolvimento
+# Iniciar servidor de desenvolvimento
 npm run dev
-```
 
-### 🌐 Acesso Local
-- **Desenvolvimento**: http://localhost:5173
-- **Preview produção**: http://localhost:4173
+# Construir para produção
+npm run build
 
-## 📱 Módulos da Plataforma
+# Visualizar build
+npm run preview
 
-### ✅ **Disponível**
-- **📊 Análise de Produção**
-  - Monitoramento de OEE (Overall Equipment Effectiveness)
-  - Métricas de disponibilidade e performance
-  - Dashboards em tempo real
+# Executar testes
+npm run test
 
-### 🚧 **Em Desenvolvimento**
-- **🔧 Manutenção**
-  - Gestão de manutenção preventiva
-  - Manutenção preditiva com IoT
-  - Controle de ordens de serviço
-
-- **🔗 Integrações**
-  - APIs para sistemas ERP
-  - Conectores MES (Manufacturing Execution System)
-  - Integração com SCADA
-
-### 📋 **Planejado**
-- **📦 Controle de Estoque**
-  - Gestão inteligente de inventário
-  - Rastreabilidade completa
-  - Otimização de níveis de estoque
-
-- **🎯 Gestão da Qualidade**
-  - Sistema de controle de qualidade
-  - Análise de não conformidades
-  - Certificações e auditorias
-
-- **🤖 Analytics & BI**
-  - Dashboards avançados
-  - Inteligência artificial
-  - Relatórios personalizados
-
-## 🔧 Configurações Técnicas
-
-### 🛣️ Path Mapping
-O projeto utiliza aliases para imports organizados:
-```typescript
-// Importações com path mapping
-import { Button } from '@/shared/components/ui';
-import { HomePage } from '@/modules/home';
-import { THEME_COLORS } from '@/core/config/theme';
-import { formatDate } from '@/core/utils/helpers';
-```
-
-### 🎨 CSS Modules
-Cada componente possui estilos isolados:
-```typescript
-// Exemplo de uso
-import styles from './Button.module.css';
-
-export const Button = () => (
-  <button className={styles.primary}>
-    Clique aqui
-  </button>
-);
-```
-
-### 🪝 Custom Hooks Disponíveis
-- **`useAuth`**: Gerenciamento de autenticação
-- **`useNotification`**: Sistema de notificações toast
-- **`useScroll`**: Controle avançado de scroll
-- **`useIntersectionObserver`**: Animações baseadas em visibilidade
-
-## 🎯 Roadmap de Desenvolvimento
-
-### 🔄 **Curto Prazo**
-1. **🔐 Sistema de autenticação** completo com JWT
-2. **🎨 Padronização visual** de todos os componentes
-3. **📱 Responsividade** completa para mobile
-4. **🔌 Integração backend** para dados reais
-
-### 🚀 **Médio Prazo**
-1. **⚡ Notificações em tempo real** com WebSocket
-2. **🧪 Testes automatizados** (Jest + Testing Library)
-3. **📱 PWA** para funcionamento offline
-4. **🌍 Internacionalização** (pt-BR, en-US)
-
-### 🌟 **Longo Prazo**
-1. **🤖 IA e Machine Learning** para insights preditivos
-2. **📱 App mobile** nativo (React Native)
-3. **🏗️ Arquitetura de microserviços**
-4. **📊 Big Data Analytics** avançado
-
-## 🤝 Como Contribuir
-
-### 📝 Padrões de Desenvolvimento
-- ✅ **ESLint + Prettier** obrigatório
-- ✅ **TypeScript** para todos os arquivos
-- ✅ **CSS Modules** para estilos isolados
-- ✅ **Comentários em português**
-- ✅ **Commits semânticos**
-
-### 🔄 Workflow de Contribuição
-```bash
-# 1. Fork do projeto
-# 2. Clone localmente
-git clone [seu-fork]
-cd PlataformaPCP
-
-# 3. Crie branch para feature
-git checkout -b feature/nova-funcionalidade
-
-# 4. Desenvolva e teste
-npm run dev
+# Verificar qualidade do código
 npm run lint
-npm run type-check
 
-# 5. Commit semântico
-git commit -m "feat: adiciona componente de gráfico"
-
-# 6. Push e Pull Request
-git push origin feature/nova-funcionalidade
+# Formatar código
+npm run format
 ```
 
-### 🏷️ Convenção de Commits
-- `feat:` Nova funcionalidade
-- `fix:` Correção de bug
-- `docs:` Alterações na documentação
-- `style:` Formatação e estilos
-- `refactor:` Refatoração de código
-- `test:` Adição ou correção de testes
-- `chore:` Tarefas de manutenção
+## 📦 Módulos da Plataforma
 
-## 👨‍💻 Informações do Projeto
+### 📊 Análise de Produção
 
-### 🧑‍🔬 **Desenvolvedor**
-**Wilmar Izequiel Kleinschmidt**
-- 📧 **Email**: kogakleinscleins@gmail.com
-- 🌐 **LinkedIn**: [linkedin.com/in/wilmar-kleinschmidt](https://linkedin.com/in/wilmar-kleinschmidt)
-- 💼 **Portfolio**: [wilmar-dev.com](https://wilmar-dev.com)
+O módulo de Análise de Produção permite:
 
-### 📊 **Status do Projeto**
-- ✅ **Versão**: 1.0.0-beta
-- 🚀 **Status**: Em desenvolvimento ativo
-- 📅 **Última atualização**: Julho 2025
-- 🏆 **Qualidade**: A+ (ESLint, TypeScript, Prettier)
+- Visualização de dados de produção em tempo real
+- Gráficos de desempenho e eficiência
+- Relatórios personalizados
+- Análise de tendências
 
-### 🔗 **Links Úteis**
-- 📋 **Issues**: [GitHub Issues](https://github.com/wilmar-kleinschmidt/PlataformaPCP/issues)
-- 📖 **Wiki**: [Documentação técnica](https://github.com/wilmar-kleinschmidt/PlataformaPCP/wiki)
-- 🚀 **Demo**: [plataforma-pcp-demo.vercel.app](https://plataforma-pcp-demo.vercel.app)
+### 🔧 Manutenção
+
+O módulo de Manutenção oferece:
+
+- Agendamento de manutenções preventivas
+- Registro de manutenções corretivas
+- Histórico de intervenções
+- Indicadores de desempenho (MTBF, MTTR)
+
+### 📦 Controle de Estoque (Planejado)
+
+O módulo de Controle de Estoque permitirá:
+
+- Gestão de inventário
+- Controle de níveis mínimos
+- Alertas de reposição
+- Rastreabilidade de materiais
+
+## 🔄 Fluxo de Desenvolvimento
+
+1. **Criar um novo componente**:
+   ```bash
+   mkdir -p src/shared/components/ui/NewComponent
+   touch src/shared/components/ui/NewComponent/index.tsx
+   touch src/shared/components/ui/NewComponent/styles.module.css
+   ```
+
+2. **Criar um novo módulo**:
+   ```bash
+   mkdir -p src/modules/new-module/{components,pages,hooks,types}
+   touch src/modules/new-module/index.ts
+   ```
+
+3. **Adicionar uma nova rota**:
+   - Editar `src/app/router.tsx`
+   - Adicionar a nova rota ao router
+
+## 🧪 Testes
+
+A aplicação utiliza Jest e React Testing Library para testes:
+
+```bash
+# Executar todos os testes
+npm run test
+
+# Executar testes com cobertura
+npm run test:coverage
+
+# Executar testes em modo watch
+npm run test:watch
+```
+
+## 🔒 Autenticação
+
+A autenticação é gerenciada pelo hook `useAuth` que fornece:
+
+- Login/Logout
+- Verificação de estado de autenticação
+- Gerenciamento de tokens JWT
+- Controle de acesso baseado em papéis
+
+## 🔍 Boas Práticas
+
+- **Componentes**: Utilize componentes funcionais com hooks
+- **TypeScript**: Defina tipos para todas as props e estados
+- **CSS Modules**: Utilize para evitar conflitos de estilo
+- **Testes**: Escreva testes para componentes e hooks
+- **Commits Semânticos**: Siga o padrão de commits semânticos (feat, fix, docs, etc.)
+
+## 🌐 Integração com Backend
+
+A comunicação com o backend é feita através do cliente HTTP configurado em `src/core/api/client.ts`:
+
+- Endpoints centralizados em `src/core/api/endpoints.ts`
+- Interceptadores para tratamento de erros e autenticação
+- Tipagem forte para requisições e respostas
+
+## 📱 Responsividade
+
+A aplicação é totalmente responsiva, adaptando-se a diferentes tamanhos de tela:
+
+- **Desktop**: Layout completo com sidebar
+- **Tablet**: Layout adaptado com sidebar colapsável
+- **Mobile**: Layout otimizado para telas pequenas
+
+## 🔄 CI/CD
+
+O projeto utiliza GitHub Actions para:
+
+- Verificação de qualidade de código (lint, testes)
+- Build automático
+- Deploy contínuo
 
 ---
 
-<div align="center">
+## 📝 Notas de Desenvolvimento
 
-**🏭 PlataformaPCP - Transformando a Indústria 4.0**
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-
-</div>
+- Utilize os componentes do design system para manter a consistência visual
+- Siga o padrão de modularização para novos recursos
+- Mantenha a cobertura de testes acima de 80%
+- Documente novos componentes e hooks
 

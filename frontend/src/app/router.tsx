@@ -4,6 +4,7 @@ import { Layout, ProtectedRoute } from '@/shared/components/layout';
 import { RedirectHandler } from '@/modules/auth/components';
 import { HomePage } from '@/modules/home/pages/HomePage';
 import { LoginPage } from '@/modules/auth/pages';
+import { ProductionAnalyzerPage } from '@/modules/production-analyzer/pages';
 
 const ProtectedLayoutWithOutlet: React.FC = () => {
   return (
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'production-analyzer',
-        element: <div>Production Analyzer Module</div>,
+        element: <ProductionAnalyzerPage />,
       },
       {
         path: 'maintenance',

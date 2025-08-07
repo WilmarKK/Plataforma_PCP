@@ -38,13 +38,16 @@ print(f"Default encoding: {sys.getdefaultencoding()}")
 print(f"File system encoding: {sys.getfilesystemencoding()}")
 print(f"PGCLIENTENCODING: {os.environ.get('PGCLIENTENCODING')}")
 
-# Importação direta da configuração para evitar imports circulares
-DATABASE_URL = "postgresql://postgres:wilmarsoller21052025@localhost:5432/plataformapcp"
+# Importação da configuração
+from app.core.config.settings import settings
 
 # Criação da engine SQLAlchemy
 engine = create_engine(
-    DATABASE_URL,
+    settings.DATABASE_URL,
     pool_pre_ping=True,
+    pool_size=settings.DATABASE_POOL_SIZE,
+    max_overflow=settings.DATABASE_MAX_OVERFLOW,
+    pool_recycle=settings.DATABASE_POOL_RECYCLE,
     future=True
 )
 

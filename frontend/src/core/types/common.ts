@@ -33,6 +33,15 @@ export interface IconProps {
   className?: string
 }
 
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string
+  error?: string
+  icon?: string
+  iconPosition?: 'left' | 'right'
+  variant?: 'default' | 'filled' | 'outlined'
+  size?: 'sm' | 'md' | 'lg'
+}
+
 export interface BaseComponent {
   className?: string
   children?: React.ReactNode

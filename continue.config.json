@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "title": "Claude 3 Sonnet (OpenRouter)",
+      "provider": "openrouter",
+      "model": "anthropic/claude-3-sonnet",
+      "apiKey": "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"
+    },
+    {
+      "title": "Claude 3 Haiku (Rápido e leve)",
+      "provider": "openrouter",
+      "model": "anthropic/claude-3-haiku",
+      "apiKey": "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"
+    },
+    {
+      "title": "GPT-4o (OpenAI via OpenRouter)",
+      "provider": "openrouter",
+      "model": "openai/gpt-4o",
+      "apiKey": "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"
+    },
+    {
+      "title": "LLaMA 3 (Meta 70B)",
+      "provider": "openrouter",
+      "model": "meta-llama/llama-3-70b-instruct",
+      "apiKey": "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"
+    },
+    {
+      "title": "Mixtral 8x7B",
+      "provider": "openrouter",
+      "model": "mistralai/mixtral-8x7b",
+      "apiKey": "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"
+    }
+  ],
+  "agent": {
+    "enabled": true,
+    "model": "openai/gpt-4o",
+    "maxContextTokens": 16000,
+    "prefix": "Você é um programador experiente e assistente de código. Responda sempre com clareza e objetividade."
+  }
+}

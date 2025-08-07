@@ -1,0 +1,78 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--glass-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--glass-bg-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Variantes */
+.default {
+  /* Estilo padrão já definido acima */
+}
+
+.filled {
+  background: var(--glass-bg-strong);
+  border-color: transparent;
+}
+
+.outlined {
+  background: transparent;
+  border-color: var(--border-primary);
+}
+
+/* Tamanhos */
+.sm {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+}
+
+.md {
+  /* Tamanho padrão já definido acima */
+}
+
+.lg {
+  padding: var(--space-xl) var(--space-2xl);
+  font-size: var(--text-lg);
+}
+
+/* Estado de erro */
+.error {
+  border-color: var(--error);
+}
+
+.errorMessage {
+  color: var(--error);
+  font-size: var(--text-xs);
+  margin-top: var(--space-xs);
+}
+
+/* Suporte para ícones */
+.icon-left {
+  padding-left: var(--space-3xl);
+}
+
+.icon-right {
+  padding-right: var(--space-3xl);
+}

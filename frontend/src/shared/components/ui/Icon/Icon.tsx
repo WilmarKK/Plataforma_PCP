@@ -28,9 +28,7 @@ export const Icon: React.FC<IconProps> = ({
     <i
       ref={iconRef}
       data-lucide={name}
-      width={size}
-      height={size}
-      style={{ color }}
+      style={{ color, width: `${size}px`, height: `${size}px` }}
       className={cn('inline-block', className)}
     />
   )

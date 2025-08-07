@@ -49,15 +49,8 @@ export default defineConfig({
   // Configurações de CSS
   css: {
     modules: {
-      // Configuração para CSS Modules
-      localsConvention: 'camelCase',
-      generateScopedName: '[name]__[local]___[hash:base64:5]'
-    },
-    postcss: {
-      plugins: [
-        // Plugins PostCSS podem ser adicionados aqui no futuro
-        // Ex: autoprefixer, tailwindcss, etc.
-      ]
+      // Configuração simplificada para CSS Modules
+      localsConvention: 'camelCase'
     }
   },
   

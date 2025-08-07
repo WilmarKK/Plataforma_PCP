@@ -14,15 +14,15 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.models.user import User
 from app.schemas.auth import UserCreate, TokenData
-from app.core.config import settings
+from app.core.config.settings import settings
 
 # Configuração para hash de senhas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Configurações JWT
-SECRET_KEY = settings.SECRET_KEY
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.JWT_SECRET_KEY
+ALGORITHM = settings.JWT_ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

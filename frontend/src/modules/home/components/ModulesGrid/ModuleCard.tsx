@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/shared/components/ui';
 import { Icon } from '@/shared/components/ui';
 import { useNotification } from '@/shared/hooks/useNotification';
-import type { ModuleData } from '@/core/types/modules';
+import type { ModuleInfo } from '@/core/types/modules';
 import styles from './ModulesGrid.module.css';
 
 interface ModuleCardProps {
-  module: ModuleData;
+  module: ModuleInfo;
   index: number;
   className?: string;
 }
@@ -32,8 +32,10 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
     switch (module.status) {
       case 'available':
         showNotification(`Módulo ${module.title} carregado!`, 'success');
-        // Navigate to module - uncomment when routes are ready
-        // navigate(module.route);
+        // Navigate to module
+        if (module.route) {
+          navigate(module.route);
+        }
         break;
       case 'development':
         showNotification('Módulo em desenvolvimento', 'warning');

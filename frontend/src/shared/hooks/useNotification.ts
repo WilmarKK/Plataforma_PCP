@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { NotificationConfig, NotificationType } from '@/core/types/common'
+import { NotificationType } from '@/core/types/common'
 import { getNotificationBackground } from '@/core/utils/helpers'
 import { NOTIFICATION_DURATION } from '@/core/config/constants'
 
